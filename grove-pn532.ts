@@ -25,6 +25,16 @@ namespace grove_pn532 {
 	 */
     const ACK_FRAME: number[] = [0x01, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00];
 
+    function log(message: string): void {
+      if(TX == null) return;
+      basic.pause(100);
+      serial.resetSerial();
+      serial.writeLine(prefix + " " + message);
+      while (serial.busy()) basic.pause(10);
+      serial.redirect(TX, RX, BAUD);
+      basic.pause(100);
+    }
+
     function debug_message(text: string): void {
     // music.playTone(262, music.beat(BeatFraction.Whole));
       log(text);
