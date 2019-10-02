@@ -107,7 +107,7 @@ namespace grove_pn532 {
 
 	if (DEBUG_SERIAL) {
 	  debug_message("Got outputBuffer!");
-	  print16BufferAsHex(outputFrame);
+	  printBufferAsHex(outputFrame);
 	}
 
         return outputFrame;
@@ -206,9 +206,9 @@ namespace grove_pn532 {
         debug_message("\n");
      }
 
-     function print16BufferAsHex(buf: Buffer): void {
+     function printBufferAsHex(buf: Buffer): void {
        let result : string = "";
-       for (let i = 0; i < 16; i++) {
+       for (let i = 0; i < buf.length; i++) {
          let m = buf.getNumber(NumberFormat.UInt8LE, i);
          result +=" " + decToHex(m);
 	 }
@@ -444,7 +444,6 @@ namespace grove_pn532 {
 		for (let l = 9; l < outputFrame.length - 2; l++) {
 		    let m = outputFrame.getNumber(NumberFormat.UInt8LE, l);
 		    let n = outputFrame.getNumber(NumberFormat.UInt8LE, l+5);
-		    if (DEBUG_SERIAL) debug_message("m: "+m+"  n: "+n);
                     //where is the first NDEF message with message type == text?
                     if (m == 0x03 &&
                         n == 0x54) {
