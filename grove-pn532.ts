@@ -329,12 +329,12 @@ namespace grove_pn532 {
 	writeBuffer(fullCommand);
 
 	//TODO: find out how to get auth response
-	let outputFrame = pins.i2cReadBuffer(ADDRESS, 5);
-	let auth_response = pins.i2cReadBuffer(ADDRESS, outputFrame[4]+2);
+	let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
+	//	let auth_response = pins.i2cReadBuffer(ADDRESS, );
 
 	if (DEBUG_SERIAL) {
 		printBufferAsHex(outputFrame);
-		printBufferAsHex(auth_response);
+		//	printBufferAsHex(auth_response);
 	}
     }
 
