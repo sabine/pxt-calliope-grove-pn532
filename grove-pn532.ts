@@ -435,7 +435,7 @@ namespace grove_pn532 {
         let textMessage = "";
 	if (targetID == 1) { //Did we find a device?
             if (DEBUG_SERIAL) {
-              printBufAsHex(read16Bytes(0x00));
+              read16Bytes(0x00);
 	    }
 
             let outputFrame = read16Bytes(0x04);
