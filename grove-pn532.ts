@@ -27,17 +27,9 @@ namespace grove_pn532 {
 
 
 
-    let TX = SerialPin.C17;
-    let RX = SerialPin.C16;
-    let BAUD = BaudRate.BaudRate9600;
     function log(message: string): void {
-      if(TX == null) return;
-      basic.pause(100);
-      serial.resetSerial();
-      serial.writeLine(prefix + " " + message);
+      serial.writeLine(message);
       while (serial.busy()) basic.pause(10);
-      serial.redirect(TX, RX, BAUD);
-      basic.pause(100);
     }
 
     function debug_message(text: string): void {
