@@ -294,7 +294,7 @@ namespace grove_pn532 {
 	  if (DEBUG_SERIAL) {
 	    debug_message("Found passive target");
 	    printBufferAsHex(outputFrame);
-	    printArrayAsHex(targetNFCID);
+	    printNrArrayAsHex(targetNFCID);
 	  }
         }
     }
