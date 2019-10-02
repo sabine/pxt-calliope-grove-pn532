@@ -442,7 +442,9 @@ namespace grove_pn532 {
                         messageLength = outputFrame.getNumber(NumberFormat.UInt8LE, l + 4) -
                             (outputFrame.getNumber(NumberFormat.UInt8LE, l + 6) & 0x3F) - 1;
 
-                        startByte = l + 7 + (outputFrame.getNumber(NumberFormat.UInt8LE, l + 6) & 0x3F);
+			    startByte = l + 7 + (outputFrame.getNumber(NumberFormat.UInt8LE, l + 6) & 0x3F);
+
+			if (DEBUG_SERIAL) debug_message("found NDEF message with message type text at "+startByte+" and length "+messageLength);
 
                         break;
                     }
