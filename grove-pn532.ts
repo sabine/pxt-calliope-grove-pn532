@@ -105,7 +105,7 @@ namespace grove_pn532 {
 
         }
 
-        if (DEBUG_SERIAL) debug_message("Got outputBuffer!");
+        if (DEBUG_SERIAL) debug_message("Got outputBuffer! "+outputFrame);
 
         return outputFrame;
     }
