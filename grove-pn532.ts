@@ -25,6 +25,11 @@ namespace grove_pn532 {
 	 */
     const ACK_FRAME: number[] = [0x01, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00];
 
+
+
+    let TX = SerialPin.C17;
+    let RX = SerialPin.C16;
+    let BAUD = BaudRate.BaudRate9600;
     function log(message: string): void {
       if(TX == null) return;
       basic.pause(100);
