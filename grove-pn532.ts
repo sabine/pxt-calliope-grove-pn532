@@ -26,8 +26,8 @@ namespace grove_pn532 {
     const ACK_FRAME: number[] = [0x01, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00];
 
     function debug_message(text: string): void {
-      music.playTone(262, music.beat(BeatFraction.Whole));
-      basic.showString(text);
+    // music.playTone(262, music.beat(BeatFraction.Whole));
+      log(text);
     }
 
 	/**
