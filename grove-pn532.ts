@@ -83,7 +83,7 @@ namespace grove_pn532 {
 	 */
      function read16Bytes(address: number) {
 
-     //authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
+         authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let readData: number[] = [0x00, 0x00, 0xFF, 0x05, 0xFB, 0xD4, 0x40, 0x01, 0x30, address, 0xBB - address, 0x00];
@@ -481,7 +481,7 @@ namespace grove_pn532 {
         let textMessage = "";
 	if (targetID == 1) { //Did we find a device?
 	if (DEBUG_SERIAL) {
-	    for (let j = 1; j < 16; j++) read16Bytes(j);
+	    for (let j = 0; j < 16; j++) read16Bytes(j);
 	    }
 
             let outputFrame = read16Bytes(0x04);
