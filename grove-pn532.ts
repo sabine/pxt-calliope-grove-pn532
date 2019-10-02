@@ -25,7 +25,7 @@ namespace grove_pn532 {
 	 */
     const ACK_FRAME: number[] = [0x01, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00];
 
-    function debug(text) {
+    function debug(text: string): void {
       basic.showString(text);
     }
 
@@ -45,7 +45,7 @@ namespace grove_pn532 {
                     for (let i = 0; i < outputFrame.length; i++) {
                         string += decToHex(outputFrame.getNumber(NumberFormat.UInt8LE, i)) + " ";
                     }
-                    debug(string);
+                    console.log(string);
                     basic.pause(50);
                 }
 
@@ -82,27 +82,27 @@ namespace grove_pn532 {
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let readData: number[] = [0x00, 0x00, 0xFF, 0x05, 0xFB, 0xD4, 0x40, 0x01, 0x30, address, 0xBB - address, 0x00];
 
-        if (DEBUG_SERIAL) debug("Reading from address " + decToHex(address));
+        if (DEBUG_SERIAL) console.log("Reading from address " + decToHex(address));
 
         writeBuffer(readData);
 
         // check ack frame
         if (!checkOutput(ACK_FRAME)) {
-            if (DEBUG_SERIAL) debug("ACK check failed!");
+            if (DEBUG_SERIAL) console.log("ACK check failed!");
 
         }
 
-        if (DEBUG_SERIAL) debug("Getting device outputFrame");
+        if (DEBUG_SERIAL) console.log("Getting device outputFrame");
 
         // we'll receive an normal information frame (see 6.2.1.1 in UM) with 16 bytes of packet data
         let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
 
         if (outputFrame[0] != 0x01) {
-            if (DEBUG_SERIAL) debug("outputFrame[0] != 0x01");
+            if (DEBUG_SERIAL) console.log("outputFrame[0] != 0x01");
 
         }
 
-        if (DEBUG_SERIAL) debug("Got outputBuffer!");
+        if (DEBUG_SERIAL) console.log("Got outputBuffer!");
 
         return outputFrame;
     }
@@ -116,12 +116,12 @@ namespace grove_pn532 {
     function write4Bytes(data: number[], address: number) {
 
         if (DEBUG_SERIAL) {
-            debug("writing to " + decToHex(address) + ": ");
+            console.log("writing to " + decToHex(address) + ": ");
             printNrArrayAsHex(data);
         }
 
         if (data.length != 4) {
-            if (DEBUG_SERIAL) debug("You passed " + data.length + " bytes and not 4 for write4Bytes()");
+            if (DEBUG_SERIAL) console.log("You passed " + data.length + " bytes and not 4 for write4Bytes()");
 
         }
 
@@ -129,8 +129,8 @@ namespace grove_pn532 {
             //TODO: Support different devices.
             //We dont want to lock the nfc tag. This happens if we write to 0x29 on some tags.
             if (DEBUG_SERIAL) {
-                debug("We tried to write to page " + decToHex(address) + ". Aborting!");
-                debug("Tried to write the following data")
+                console.log("We tried to write to page " + decToHex(address) + ". Aborting!");
+                console.log("Tried to write the following data")
                 printNrArrayAsHex(data);
             }
 
@@ -161,7 +161,7 @@ namespace grove_pn532 {
 
         // check ack frame
         if (!checkOutput(ACK_FRAME)) {
-            if (DEBUG_SERIAL) debug("ACK check failed!");
+            if (DEBUG_SERIAL) console.log("ACK check failed!");
 
         }
 
@@ -195,9 +195,9 @@ namespace grove_pn532 {
      */
     function printNrArrayAsHex(arr: number[]): void {
         for (let i = 0; i < arr.length; i++) {
-            debug(decToHex(arr[i]) + " ")
+            console.log(decToHex(arr[i]) + " ")
         }
-        debug("\n");
+        console.log("\n");
     }
 
     /**
@@ -252,7 +252,7 @@ namespace grove_pn532 {
         if (validAck && validWakeupOK) {
             running = true;
         } else {
-            if (DEBUG_SERIAL) debug("Waking up failed!");
+            if (DEBUG_SERIAL) console.log("Waking up failed!");
         }
     }
 
@@ -277,7 +277,7 @@ namespace grove_pn532 {
      * Formats a tag as ndef format.
      */
     export function formatAsNdef(): void {
-        if (DEBUG_SERIAL) debug("Starting to format...");
+        if (DEBUG_SERIAL) console.log("Starting to format...");
 
         if (!running) {
             wakeup();
@@ -303,10 +303,10 @@ namespace grove_pn532 {
             }
 
         } else {
-            if (DEBUG_SERIAL) debug("Did not find a target when trying to format");
+            if (DEBUG_SERIAL) console.log("Did not find a target when trying to format");
         }
 
-        if (DEBUG_SERIAL) debug("formatting finished...");
+        if (DEBUG_SERIAL) console.log("formatting finished...");
     }
 
 	/**
@@ -331,7 +331,7 @@ namespace grove_pn532 {
     export function writeNDEFText(charsToWrite: string) {
         basic.showIcon(IconNames.Square);
 
-        if (DEBUG_SERIAL) debug("Starting to write...");
+        if (DEBUG_SERIAL) console.log("Starting to write...");
 
         if (!running) {
             wakeup();
@@ -343,7 +343,7 @@ namespace grove_pn532 {
 
         if (targetID == 1) { //Did we find a device?
 
-            if (DEBUG_SERIAL) debug("found target to write to");
+            if (DEBUG_SERIAL) console.log("found target to write to");
 
             //FIXME: Redundent initilization of the tag?.
             formatAsNdef();
@@ -353,7 +353,7 @@ namespace grove_pn532 {
             //We also have to reserve 1 bit for the 0xFE at the end.
             let maxStringLength = ((0x29 - 0x04) * 4) - 1;
             if (charsToWrite.length > maxStringLength) {
-                if (DEBUG_SERIAL) debug("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
+                if (DEBUG_SERIAL) console.log("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
                 return;
             }
 
@@ -394,10 +394,10 @@ namespace grove_pn532 {
             write4Bytes(pageToAdd, address++);
 
         } else {
-            if (DEBUG_SERIAL) debug("Did not find a target when trying to write");
+            if (DEBUG_SERIAL) console.log("Did not find a target when trying to write");
         }
         basic.clearScreen();
-        if (DEBUG_SERIAL) debug("writing finished...");
+        if (DEBUG_SERIAL) console.log("writing finished...");
 
     }
 
@@ -449,14 +449,14 @@ namespace grove_pn532 {
 
                     while (true) {
 
-                        if (DEBUG_SERIAL) debug("reading byte " + startByte + " from page " + decToHex(currentPage));
+                        if (DEBUG_SERIAL) console.log("reading byte " + startByte + " from page " + decToHex(currentPage));
 
                         if (startByte >= outputFrame.length - 2) {
                             //We need to read more bytes
 
                             messageLength -= amountRead;
 
-                            if (DEBUG_SERIAL) debug("messageLength left: " + messageLength);
+                            if (DEBUG_SERIAL) console.log("messageLength left: " + messageLength);
 
                             if (messageLength <= 0) {
                                 //Reached the end of input.
@@ -465,13 +465,13 @@ namespace grove_pn532 {
 
                             startByte = 9;
                             currentPage += 0x04; //We read 4 pages, read the next ones now
-                            if (DEBUG_SERIAL) debug("Getting a new page with address " + decToHex(currentPage));
+                            if (DEBUG_SERIAL) console.log("Getting a new page with address " + decToHex(currentPage));
                             outputFrame = read16Bytes(currentPage);
                             amountRead = 16;
 
                             if (outputFrame == null) {
                                 //Something has gone terribly wrong. abort!
-                                if (DEBUG_SERIAL) debug("error reading from address " + decToHex(currentPage) + "! Aborting");
+                                if (DEBUG_SERIAL) console.log("error reading from address " + decToHex(currentPage) + "! Aborting");
                                 break;
                             }
 
@@ -480,20 +480,20 @@ namespace grove_pn532 {
                         if (outputFrame.getNumber(NumberFormat.UInt8LE, startByte) == 0xFE) {
                             //We reached the end of our record. Stop reading.
                             //Theoretically we should not reach here since we read till exectly the character before
-                            if (DEBUG_SERIAL) debug("Found end of record (0xFE)! This shouldnt happen..");
+                            if (DEBUG_SERIAL) console.log("Found end of record (0xFE)! This shouldnt happen..");
                             break;
                         }
 
                         //ToDo: read UTF-8
                         textMessage += String.fromCharCode(outputFrame.getNumber(NumberFormat.UInt8LE, startByte));
                         startByte++;
-                        if (DEBUG_SERIAL) debug("Got char " + String.fromCharCode(outputFrame.getNumber(NumberFormat.UInt8LE, startByte)));
+                        if (DEBUG_SERIAL) console.log("Got char " + String.fromCharCode(outputFrame.getNumber(NumberFormat.UInt8LE, startByte)));
                     }
                 }
             }
         }
 
-        if (DEBUG_SERIAL) debug("The found textMessage is\n" + textMessage);
+        if (DEBUG_SERIAL) console.log("The found textMessage is\n" + textMessage);
 
         return textMessage;
     }
