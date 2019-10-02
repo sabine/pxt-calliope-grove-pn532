@@ -302,23 +302,21 @@ namespace grove_pn532 {
     }
 
     function authenticate(address: number, key: number[]): void {
-  
-	let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address], concatNumArr(key, targetNFCID));
 
-        //Length of the command
+        // authenticate to the sector the address is in
+        let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address/4], concatNumArr(key, targetNFCID));
+
         let len = command.length;
         //Checksum for the length;
-        let lcs = 0x100 - (len % 0x100);
+        let length_checksum = 0x100 - (len % 0x100);
 
-        let preCommand = [0x00, 0x00, 0xFF, len, lcs];
+        let preCommand = [0x00, 0x00, 0xFF, len, length_checksum];
 
-        //Summing up all bytes in the data send.
         let allBytes = 0;
         for (let i = 0; i < command.length; i++) allBytes += command[i];
-        //Data checksum
-        let dcs = 0x100 - (allBytes % 0x100);
+        let data_checksum = 0x100 - (allBytes % 0x100);
 
-        let postCommand = [dcs, 0x00];
+        let postCommand = [data_checksum, 0x00];
 
 
         let fullCommand = concatNumArr(concatNumArr(preCommand, command), postCommand);
@@ -330,7 +328,7 @@ namespace grove_pn532 {
 
 	writeBuffer(fullCommand);
 
-	checkOutput([0x99, 0x99, 0x99, 0x99, 0x99]);
+	//TODO: find out how to get auth response
     }
 
     /**
