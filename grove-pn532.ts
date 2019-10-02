@@ -304,7 +304,7 @@ namespace grove_pn532 {
     function authenticate(address: number, key: number[]): void {
 
         // authenticate to the sector the address is in
-        let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address/4], concatNumArr(key, targetNFCID));
+        let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address], concatNumArr(key, targetNFCID));
 
         let len = command.length;
         //Checksum for the length;
@@ -329,13 +329,19 @@ namespace grove_pn532 {
 	writeBuffer(fullCommand);
 
 	//TODO: find out how to get auth response
-	let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
+        if (!checkOutput(ACK_FRAME)) {
+            if (DEBUG_SERIAL) debug_message("ACK check failed!");
+
+        }
+
+
+	//let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
 	//	let auth_response = pins.i2cReadBuffer(ADDRESS, );
 
-	if (DEBUG_SERIAL) {
-		printBufferAsHex(outputFrame);
+	//	if (DEBUG_SERIAL) {
+	//		printBufferAsHex(outputFrame);
 		//	printBufferAsHex(auth_response);
-	}
+		//	}
     }
 
     /**
