@@ -325,10 +325,12 @@ namespace grove_pn532 {
 
 	if (DEBUG_SERIAL) {
 	debug_message("trying to authenticate...");
-	printNrArrayAsHex(fullCommand);
+	//printNrArrayAsHex(fullCommand);
 	}
 
-        writeBuffer(fullCommand);
+	writeBuffer(fullCommand);
+
+	checkOutput([0x99]);
     }
 
     /**
