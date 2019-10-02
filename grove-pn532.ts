@@ -432,10 +432,13 @@ namespace grove_pn532 {
                 let messageLength = -1;
                 // skip RDY, PREAMBLE, START CODE, LEN, LCS, TFI, COMMAND CODE, STATUS
                 // skip also DCS, POSTAMBLE at the end
-                for (let l = 9; l < outputFrame.length - 2; l++) {
-                    //where's the first NDEF message with message type == text?
-                    if (outputFrame.getNumber(NumberFormat.UInt8LE, l) == 0x03 &&
-                        outputFrame.getNumber(NumberFormat.UInt8LE, l + 5) == 0x54) {
+		for (let l = 9; l < outputFrame.length - 2; l++) {
+		    let m = outputFrame.getNumber(NumberFormat.UInt8LE, l);
+		    let n = outputFrame.getNumber(NumberFormat.UInt8LE, l+5);
+		    if (DEBUG_SERIAL) debug_message("m: "+m+"  n: "+n);
+                    //where is the first NDEF message with message type == text?
+                    if (m == 0x03 &&
+                        n == 0x54) {
 
                         //The last 6 bits (0x3F) of the status byte are the length of the IANA language code field 
                         // Text length = messageLength - language code length - 1 
