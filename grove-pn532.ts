@@ -81,7 +81,9 @@ namespace grove_pn532 {
 	 * @param address The address to read from
 	 * @returns A buffer filled with the data we recieved. null if reading failed.
 	 */
-    function read16Bytes(address: number) {
+     function read16Bytes(address: number) {
+
+	 authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let readData: number[] = [0x00, 0x00, 0xFF, 0x05, 0xFB, 0xD4, 0x40, 0x01, 0x30, address, 0xBB - address, 0x00];
@@ -299,6 +301,10 @@ namespace grove_pn532 {
         }
     }
 
+    function authenticate(address: number, key: number[]): void {
+      const authenticate: number[] = [0x00, 0x00, 0xFF];
+    }
+
     /**
      * Formats a tag as ndef format.
      */
@@ -441,7 +447,7 @@ namespace grove_pn532 {
             // we have to wait...
         }
 
-        findPassiveTarget();
+	findPassiveTarget();
 
         let textMessage = "";
 	if (targetID == 1) { //Did we find a device?
