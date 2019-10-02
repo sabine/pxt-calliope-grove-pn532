@@ -27,14 +27,9 @@ namespace grove_pn532 {
 
 
 
-    function log(message: string): void {
-      serial.writeLine(message);
-      while (serial.busy()) basic.pause(10);
-    }
-
     function debug_message(text: string): void {
     // music.playTone(262, music.beat(BeatFraction.Whole));
-      log(text);
+      serial.writeLine(text);
     }
 
 	/**
