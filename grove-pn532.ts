@@ -83,7 +83,7 @@ namespace grove_pn532 {
 	 */
      function read16Bytes(address: number) {
 
-	 authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF5]);
+	 authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let readData: number[] = [0x00, 0x00, 0xFF, 0x05, 0xFB, 0xD4, 0x40, 0x01, 0x30, address, 0xBB - address, 0x00];
@@ -335,13 +335,11 @@ namespace grove_pn532 {
         }
 
 
-	//let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
-	//	let auth_response = pins.i2cReadBuffer(ADDRESS, );
+	let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
 
-	//	if (DEBUG_SERIAL) {
-	//		printBufferAsHex(outputFrame);
-		//	printBufferAsHex(auth_response);
-		//	}
+		if (DEBUG_SERIAL) {
+			printBufferAsHex(outputFrame);
+			}
     }
 
     /**
