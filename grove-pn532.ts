@@ -107,7 +107,7 @@ namespace grove_pn532 {
 
 	if (DEBUG_SERIAL) {
 	  debug_message("Got outputBuffer!");
-          printNrArrayAsHex(outputFrame);
+	  //   printNrArrayAsHex(outputFrame);
 	}
 
         return outputFrame;
