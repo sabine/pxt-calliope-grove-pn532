@@ -105,7 +105,7 @@ namespace grove_pn532 {
 
         }
 
-        if (DEBUG_SERIAL) debug_message("Got outputBuffer! "+JSON.stringify(outputFrame));
+        if (DEBUG_SERIAL) debug_message("Got outputBuffer! "+decToHex(outputFrame));
 
         return outputFrame;
     }
