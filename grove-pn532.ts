@@ -284,7 +284,12 @@ namespace grove_pn532 {
         // check response
         let outputFrame = pins.i2cReadBuffer(ADDRESS, 22);
         if (outputFrame[0] == 0x01 && outputFrame[8] == 0x01) {
-            targetID = 1;
+	  targetID = 1;
+
+	  if (DEBUG_SERIAL) {
+	    debug_message("Found passive target");
+	    printBufferAsHex(outputFrame);
+	  }
         }
     }
 
