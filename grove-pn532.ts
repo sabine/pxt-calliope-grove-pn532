@@ -95,7 +95,7 @@ namespace grove_pn532 {
 
         }
 
-        if (DEBUG_SERIAL) debug_message("Getting device outputFrame");
+	//        if (DEBUG_SERIAL) debug_message("Getting device outputFrame");
 
         // we'll receive an normal information frame (see 6.2.1.1 in UM) with 16 bytes of packet data
         let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
@@ -106,7 +106,7 @@ namespace grove_pn532 {
         }
 
 	if (DEBUG_SERIAL) {
-	  debug_message("Got outputBuffer!");
+	//	  debug_message("Got outputBuffer!");
 	  printBufferAsHex(outputFrame);
 	}
 
@@ -434,9 +434,8 @@ namespace grove_pn532 {
 
         let textMessage = "";
 	if (targetID == 1) { //Did we find a device?
-            if (DEBUG_SERIAL) {
-	    read16Bytes(0x00);
-	    read16Bytes(0x0B);
+	if (DEBUG_SERIAL) {
+	    for (let j = 0; j < 16; j++) read16Bytes(j);
 	    }
 
             let outputFrame = read16Bytes(0x04);
