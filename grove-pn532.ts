@@ -315,7 +315,6 @@ namespace grove_pn532 {
         //Summing up all bytes in the data send.
         let allBytes = 0;
         for (let i = 0; i < command.length; i++) allBytes += command[i];
-        for (let i = 0; i < data.length; i++) allBytes += data[i];
         //Data checksum
         let dcs = 0x100 - (allBytes % 0x100);
 
