@@ -107,7 +107,7 @@ namespace grove_pn532 {
 
 	if (DEBUG_SERIAL) {
 	  debug_message("Got outputBuffer!");
-	  //   printNrArrayAsHex(outputFrame);
+	  print16BufferAsHex(outputFrame);
 	}
 
         return outputFrame;
@@ -204,7 +204,16 @@ namespace grove_pn532 {
             debug_message(decToHex(arr[i]) + " ")
         }
         debug_message("\n");
-    }
+     }
+
+     function print16BufferAsHex(buf: Buffer): void {
+       let result : string = "";
+       for (let i = 0; i < 16; i++) {
+         let m = buf.getNumber(NumberFormat.UInt8LE, i);
+         result +=" " + decToHex(m);
+	 }
+	 debug_message(result+"\n");
+     }
 
     /**
      * Gets the hex number representation of a integer as a string.
