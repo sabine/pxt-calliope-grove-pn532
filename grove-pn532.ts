@@ -302,7 +302,34 @@ namespace grove_pn532 {
     }
 
     function authenticate(address: number, key: number[]): void {
-      const authenticate: number[] = [0x00, 0x00, 0xFF];
+  
+	let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address], concatNumArr(key, targetNFCID));
+
+        //Length of the command
+        let len = command.length;
+        //Checksum for the length;
+        let lcs = 0x100 - (len % 0x100);
+
+        let preCommand = [0x00, 0x00, 0xFF, len, lcs];
+
+        //Summing up all bytes in the data send.
+        let allBytes = 0;
+        for (let i = 0; i < command.length; i++) allBytes += command[i];
+        for (let i = 0; i < data.length; i++) allBytes += data[i];
+        //Data checksum
+        let dcs = 0x100 - (allBytes % 0x100);
+
+        let postCommand = [dcs, 0x00];
+
+
+        let fullCommand = concatNumArr(concatNumArr(preCommand, command), postCommand);
+
+	if (DEBUG_SERIAL) {
+	debug_message("trying to authenticate...");
+	printNrArrayAsHex(fullCommand);
+	}
+
+        writeBuffer(fullCommand);
     }
 
     /**
