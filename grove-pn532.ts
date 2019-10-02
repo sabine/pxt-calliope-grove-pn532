@@ -83,7 +83,7 @@ namespace grove_pn532 {
 	 */
      function read16Bytes(address: number) {
 
-	 authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
+	 authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF5]);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let readData: number[] = [0x00, 0x00, 0xFF, 0x05, 0xFB, 0xD4, 0x40, 0x01, 0x30, address, 0xBB - address, 0x00];
@@ -304,7 +304,7 @@ namespace grove_pn532 {
     function authenticate(address: number, key: number[]): void {
 
         // authenticate to the sector the address is in
-        let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address], concatNumArr(key, targetNFCID));
+	let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address/4], concatNumArr(key, targetNFCID));
 
         let len = command.length;
         //Checksum for the length;
