@@ -330,7 +330,7 @@ namespace grove_pn532 {
 
 	writeBuffer(fullCommand);
 
-	checkOutput([0x99]);
+	checkOutput([0x99, 0x99, 0x99, 0x99, 0x99]);
     }
 
     /**
