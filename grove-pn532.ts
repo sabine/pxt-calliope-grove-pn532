@@ -15,6 +15,7 @@ namespace grove_pn532 {
 
     let targetID = 0;
     // if ISO14443-A / Mifare target found, targetID will be 1
+    let targetNFCID = [0,0,0,0];
     let running = false;
     // if PN532 isn't running, no reading will be possible
 
@@ -140,7 +141,7 @@ namespace grove_pn532 {
                 printNrArrayAsHex(data);
             }
 
-        }
+	    }
 
         let command = [0xD4, 0x40, targetID, 0xA2, address];
 
@@ -285,10 +286,15 @@ namespace grove_pn532 {
         let outputFrame = pins.i2cReadBuffer(ADDRESS, 22);
         if (outputFrame[0] == 0x01 && outputFrame[8] == 0x01) {
 	  targetID = 1;
+          targetNFCID[0] = outputFrame[12];
+          targetNFCID[1] = outputFrame[13];
+          targetNFCID[2] = outputFrame[14];
+          targetNFCID[3] = outputFrame[15];
 
 	  if (DEBUG_SERIAL) {
 	    debug_message("Found passive target");
 	    printBufferAsHex(outputFrame);
+	    printArrayAsHex(targetNFCID);
 	  }
         }
     }
