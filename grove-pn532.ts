@@ -83,7 +83,7 @@ namespace grove_pn532 {
 	 */
      function read16Bytes(address: number) {
 
-	 authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
+     //authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let readData: number[] = [0x00, 0x00, 0xFF, 0x05, 0xFB, 0xD4, 0x40, 0x01, 0x30, address, 0xBB - address, 0x00];
@@ -328,18 +328,10 @@ namespace grove_pn532 {
 
 	writeBuffer(fullCommand);
 
-	//TODO: find out how to get auth response
         if (!checkOutput(ACK_FRAME)) {
             if (DEBUG_SERIAL) debug_message("ACK check failed!");
 
         }
-
-
-	let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
-
-		if (DEBUG_SERIAL) {
-			printBufferAsHex(outputFrame);
-			}
     }
 
     /**
