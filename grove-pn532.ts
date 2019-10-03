@@ -406,7 +406,7 @@ namespace grove_pn532 {
             let data : number[][] = [];
             
             for (let i=0;i<blocksNeeded;i++) {
-              let blockData = [];
+              let blockData : number[] = [];
               /*
               let len = charsToWrite.length - (blocksNeeded - 1)*16;
               
