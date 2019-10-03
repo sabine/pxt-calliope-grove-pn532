@@ -90,7 +90,7 @@ namespace grove_pn532 {
 
         if (DEBUG_SERIAL) {
             debug_message("Reading from address " + decToHex(address));
-            printBufferAsHex(fullCommand);
+            printNrArrayAsHex(fullCommand);
         }
 
         writeBuffer(fullCommand);
@@ -101,8 +101,6 @@ namespace grove_pn532 {
                 debug_message("ACK check failed!");
 
         }
-
-        //        if (DEBUG_SERIAL) debug_message("Getting device outputFrame");
 
         // we'll receive an normal information frame (see 6.2.1.1 in UM) with 16 bytes of packet data
         let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
@@ -329,8 +327,8 @@ namespace grove_pn532 {
 
     function authenticate(address: number, key: number[]): void {
 
-        // authenticate to the sector the address is in
-        let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address / 4], concatNumArr(key, targetNFCID));
+        // InDataExchange, authenticate with key A 0x60
+        let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address], concatNumArr(key, targetNFCID));
 
         let fullCommand = makeCommand(command);
 
