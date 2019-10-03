@@ -202,11 +202,12 @@ namespace grove_pn532 {
      * Prints an array of numbers to the console in hex representation.
      * @param arr The array of numbers to print.
      */
-    function printNrArrayAsHex(arr: number[]): void {
+     function printNrArrayAsHex(arr: number[]): void {
+        let result : string = "";
         for (let i = 0; i < arr.length; i++) {
-            debug_message(decToHex(arr[i]) + " ")
+            result += " " + decToHex(arr[i])
         }
-        debug_message("\n");
+        debug_message(result+"\n");
      }
 
      function printBufferAsHex(buf: Buffer): void {
@@ -322,8 +323,8 @@ namespace grove_pn532 {
         let fullCommand = concatNumArr(concatNumArr(preCommand, command), postCommand);
 
 	if (DEBUG_SERIAL) {
-	debug_message("trying to authenticate...");
-	//printNrArrayAsHex(fullCommand);
+  	debug_message("trying to authenticate with this command: ");
+	  printNrArrayAsHex(fullCommand);
 	}
 
 	writeBuffer(fullCommand);
