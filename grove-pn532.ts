@@ -145,26 +145,9 @@ namespace grove_pn532 {
 
 	    }
 
-        let command = [0xD4, 0x40, targetID, 0xA2, address];
+        let command = comcatNumArr([0xD4, 0x40, targetID, 0xA2, address], data);
 
-        //Length of the command
-        let len = command.length + data.length;
-        //Checksum for the length;
-        let lcs = 0x100 - (len % 0x100);
-
-        let preCommand = [0x00, 0x00, 0xFF, len, lcs];
-
-        //Summing up all bytes in the data send.
-        let allBytes = 0;
-        for (let i = 0; i < command.length; i++) allBytes += command[i];
-        for (let i = 0; i < data.length; i++) allBytes += data[i];
-        //Data checksum
-        let dcs = 0x100 - (allBytes % 0x100);
-
-        let postCommand = [dcs, 0x00];
-
-
-        let fullCommand = concatNumArr(concatNumArr(concatNumArr(preCommand, command), data), postCommand);
+	let fullCommand = makeCommand(command);
 
         writeBuffer(fullCommand);
 
