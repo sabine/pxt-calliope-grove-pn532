@@ -462,11 +462,13 @@ namespace grove_pn532 {
             let blocksNeeded = messageLength/16+1;
                         
             for (let j=0;j<blocksNeeded;j++) {
-              let message = read16Bytes(dataBlocks[j]).slice(9,16);
+              let messageFrame = read16Bytes(dataBlocks[j]);
+              /*
+              let message = messageFrame.slice(9,16);
               let len = messageLength - (blocksNeeded-1)*16;
               if(j<blocksNeeded -1) len=16
               for (let i=1;i<=len;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));            
-            
+              */
         }
 
         if (DEBUG_SERIAL)
