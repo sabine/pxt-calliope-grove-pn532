@@ -396,7 +396,7 @@ namespace grove_pn532 {
 
             // 5 blocks
             let maxStringLength = 16+16+16+16+16+16;
-            let message = charsToWrite;
+            let message : string = charsToWrite;
             
             if (charsToWrite.length > maxStringLength) {
                 message = charsToWrite.slice(0, maxStringLength);
@@ -404,17 +404,17 @@ namespace grove_pn532 {
                     debug_message("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
             }
 
-            let blocksNeeded = charsToWrite.length/16+1;
+            let blocksNeeded = message.length/16+1;
             
             let data : number[][] = [];
             
             for (let i=0;i<blocksNeeded;i++) {
               let blockData : number[] = [];
-              let len = charsToWrite.length - (blocksNeeded - 1)*16;
+              let len = message.length - (blocksNeeded - 1)*16;
               
               if (i < blocksNeeded - 1) len = 16;
               
-              for (let j=0;j<len;j++) blockData[j] = charsToWrite.charCodeAt(i*16+j);
+              for (let j=0;j<len;j++) blockData[j] = message.charCodeAt(i*16+j);
               for (let j=len;j<16;j++) blockData[j] = 0;
               
               data[i] = blockData;
