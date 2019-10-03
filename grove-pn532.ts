@@ -81,8 +81,7 @@ namespace grove_pn532 {
      */
     function read16Bytes(address: number) {
 
-        authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
-        basic.pause(50);
+        //authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let readData: number[] = [0x00, 0x00, 0xFF, 0x05, 0xFB, 0xD4, 0x40, 0x01, 0x30, address, 0xBB - address, 0x00];
@@ -501,7 +500,6 @@ namespace grove_pn532 {
             if (DEBUG_SERIAL) {
                 for (let j = 0; j < 16; j++)
                     read16Bytes(j);
-                    basic.pause(50);
             }
 
             let outputFrame = read16Bytes(0x04);
