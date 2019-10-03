@@ -397,7 +397,7 @@ namespace grove_pn532 {
             let maxStringLength = 16+16+16+16+16+16;
             
             if (message.length > maxStringLength) {
-                message = message.substr(0, maxStringLength);
+                //message = message.substr(0, maxStringLength);
                 if (DEBUG_SERIAL)
                     debug_message("String length of " + message.length + "is too high.\nNeeds to be <=" + maxStringLength);
             }
