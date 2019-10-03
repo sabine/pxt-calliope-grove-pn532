@@ -3,5 +3,5 @@
   "grove_pn532.readText": "Lies Text aus dem MIFARE Classic Tag an der Antenne.",
   "grove_pn532.writeText": "Schreibe Text auf den MIFARE Classic Tag an der Antenne.",
   "grove_pn532.convertNrToString": "Zahl in Text umwandeln.",
-  "grove_pn532.grove_pn532_getNFCID": "NFC ID des Tags an der Antenne lesen."
+  "grove_pn532.getNFCID": "NFC ID des Tags an der Antenne lesen."
 }
