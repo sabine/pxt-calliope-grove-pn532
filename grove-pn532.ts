@@ -295,10 +295,10 @@ namespace grove_pn532 {
         let outputFrame = readFrame();
         if (outputFrame[0] == 0x01 && outputFrame[8] == 0x01) {
             targetID = 1;
-            targetNFCID[0] = outputFrame[12];
-            targetNFCID[1] = outputFrame[13];
-            targetNFCID[2] = outputFrame[14];
-            targetNFCID[3] = outputFrame[15];
+            targetNFCID[0] = outputFrame[14];
+            targetNFCID[1] = outputFrame[15];
+            targetNFCID[2] = outputFrame[16];
+            targetNFCID[3] = outputFrame[17];
 
             if (DEBUG_SERIAL) {
                 debug_message("NFC Tag gefunden!");
