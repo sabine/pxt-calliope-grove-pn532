@@ -2,6 +2,7 @@
   "grove_pn532.readText|block": "lies Text aus NFC-Tag",
   "grove_pn532.writeText|block": "schreibe auf NFC-Tag %charsToWrite",
   "grove_pn532.convertNrToString|block": "wandle in Text um %nr",
+  "grove_pn532.grove_pn532_getNFCID|block": "lese die einzigartige ID des NFC-Tags",
   "grove_pn532|block": "Grove NFC Tag",
   "{id:category}Grove_pn532": "Grove_pn532"
 }

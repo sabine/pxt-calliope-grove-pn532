@@ -2,7 +2,7 @@
  * Functions for the Seeedstudio Grove NFC.
  * WIP: Reads NDEF text records from ISO14443-3A / Mifare
  *
- * @author Mirek Hancl, Alexander Pfanne
+ * @author Mirek Hancl, Alexander Pfanne, Sabine Schmaltz
  */
 
 //% weight=2 color=#1174EE icon="\uf086" block="Grove NFC Tag"
@@ -238,14 +238,11 @@ namespace grove_pn532 {
         const wakeup: number[] = [0x00, 0x00, 0xFF, 0x03, 0xFD, 0xD4, 0x14, 0x01, 0x17, 0x00];
         writeBuffer(wakeup);
 
-        // check ack
         let validAck = checkOutput(ACK_FRAME);
 
-        // check response
         const wakeupOK: number[] = [0x01, 0x00, 0x00, 0xFF, 0x02, 0xFE, 0xD5, 0x15, 0x16];
         let validWakeupOK = checkOutput(wakeupOK);
 
-        // if something went wrong...
         if (validAck && validWakeupOK) {
             running = true;
         } else {
@@ -268,10 +265,8 @@ namespace grove_pn532 {
         const listTarget: number[] = [0x00, 0x00, 0xFF, 0x04, 0xFC, 0xD4, 0x4A, 0x01, 0x00, 0xE1, 0x00];
         writeBuffer(listTarget);
 
-        // check ack frame
         checkOutput(ACK_FRAME);
 
-        // check response
         let outputFrame = readFrame();
         if (outputFrame[0] == 0x01 && outputFrame[8] == 0x01) {
             targetID = 1;
@@ -337,15 +332,28 @@ namespace grove_pn532 {
         let authResponse = readFrame();
         let success = (authResponse[7] == 0x00);
 
-        /*
-        if (DEBUG_SERIAL) {
-        if(success) debug_message("Erfolgreich! ") else debug_message("Fehlgeschlagen!");
-        }
-         */
-
         return success;
     }
 
+    /**
+      * Converts number to string
+     */
+    //% weight=212
+    //% blockId=grove_pn532_getNFCID
+    //% block="get the unique NFC ID of the Tag"
+    //% parts="grove_pn532"
+    export function getNFCID(nr: number): string {
+        findPassiveTarget();
+        
+        if (targetID) {
+          let result = "";
+          for (let i=0;i<4;i++) result += decToHex(targetNFCID[i]);
+          return result;
+        } else {
+          return "";
+        }
+    }
+    
     /**
      * Converts number to string
      */
