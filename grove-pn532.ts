@@ -255,6 +255,8 @@ namespace grove_pn532 {
 
         // if something went wrong...
         if (validAck && validWakeupOK) {
+            increaseTimeout();
+        
             running = true;
         } else {
             if (DEBUG_SERIAL)
@@ -307,6 +309,15 @@ namespace grove_pn532 {
         }
     }
 
+    function increaseTimeout() : void {
+      // RFConfiguration, CfgItem 0x02, timeout 0x1B instead of 0x0B
+      let command : number[] = [0xD4, 0x32, 0x02, 0x00, 0x1B, 0x0A]
+      
+      writeBuffer(makeCommand(command));
+      
+      checkOutput(ACK_FRAME);
+    }
+    
     function makeCommand(command: number[]): number[]{
         let len = command.length;
         let length_checksum = 0x100 - (len % 0x100);
