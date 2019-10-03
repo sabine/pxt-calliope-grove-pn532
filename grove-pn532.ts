@@ -334,7 +334,7 @@ namespace grove_pn532 {
         return fullCommand;
     }
 
-    function authenticate(address: number, key: number[]): void {
+    function authenticate(address: number, key: number[]): boolean {
 
         // InDataExchange, authenticate with key A 0x60
         let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address], concatNumArr(key, targetNFCID));
@@ -348,11 +348,16 @@ namespace grove_pn532 {
 
         writeBuffer(fullCommand);
 
-        if (!checkOutput(ACK_FRAME)) {
-            if (DEBUG_SERIAL)
-                debug_message("ACK check failed!");
-
+        checkOutput(ACK_FRAME);
+        
+        let authResponse = readFrame();
+        let sucess = authResponse[7] == 0x00;
+        
+        if (DEBUG_SERIAL) {
+          debug_message(success? "Erfolgreich.": "Fehlgeschlagen.")
         }
+        
+        return success;
     }
 
     /**
