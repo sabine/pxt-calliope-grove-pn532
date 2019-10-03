@@ -428,7 +428,7 @@ namespace grove_pn532 {
         if (targetID == 1) {
             let outputFrame = read16Bytes(0x04);
 
-            let message = outputFrame.splice(9, 16);
+            let message = outputFrame.slice(9, 16);
             let messageLength = message[0];
                         
             for (let i=1;i<messageLength;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));            
