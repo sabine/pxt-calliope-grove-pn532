@@ -9,6 +9,9 @@ Read and write text from and to Mifare Classic chips with MakeCode, with your mi
 
 Keys can currently not be set to a different value, but feel free to clone this and adapt it to your needs.
 
+
+If you need to write other commands to PN532, look at this: https://www.nxp.com/docs/en/user-guide/141520.pdf
+
 ## License
 
 Licensed under the MIT License (MIT). See LICENSE file for more details.
