@@ -76,21 +76,22 @@ namespace grove_pn532 {
 
     function readFrame(): Buffer {
 
-        var buffer = pins.i2cReadBuffer(ADDRESS, 7, true);
+        let buffer = pins.i2cReadBuffer(ADDRESS, 7, true);
         let len = buffer[4];
-        buffer = pins.i2cReadBuffer(ADDRESS, len + 8);
+        let outputFrame = pins.i2cReadBuffer(ADDRESS, len + 8);
 
-        if (buffer[0] != 0x01) {
+        if (outputFrame[0] != 0x01) {
             if (DEBUG_SERIAL)
-                debug_message("buffer[0] != 0x01");
+                debug_message("outputFrame[0] != 0x01");
 
         }
 
         if (DEBUG_SERIAL) {
-            printBufferAsHex(buffer);
+            debug_message("read frame:");
+            printBufferAsHex(outputFrame);
         }
 
-        return buffer;
+        return outputFrame;
     }
 
     /**
