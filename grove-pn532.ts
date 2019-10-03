@@ -145,7 +145,7 @@ namespace grove_pn532 {
 
 	    }
 
-        let command = comcatNumArr([0xD4, 0x40, targetID, 0xA2, address], data);
+        let command = concatNumArr([0xD4, 0x40, targetID, 0xA2, address], data);
 
 	let fullCommand = makeCommand(command);
 
