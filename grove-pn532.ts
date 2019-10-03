@@ -350,9 +350,9 @@ namespace grove_pn532 {
         checkOutput(ACK_FRAME);
 
         let authResponse = readFrame();
-        //let sucess = (authResponse[7] == 0x00);
+        let success = (authResponse[7] == 0x00);
         
-        //return success;
+        return success;
     }
 
     /**
