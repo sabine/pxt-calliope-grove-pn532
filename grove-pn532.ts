@@ -334,7 +334,7 @@ namespace grove_pn532 {
         return fullCommand;
     }
 
-    function authenticate(address: number, key: number[]): void {
+    function authenticate(address: number, key: number[]): boolean {
 
         // InDataExchange, authenticate with key A 0x60
         let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address], concatNumArr(key, targetNFCID));
