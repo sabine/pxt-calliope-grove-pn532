@@ -336,13 +336,13 @@ namespace grove_pn532 {
     }
 
     /**
-      * Converts number to string
+      * Get NFC ID of the Tag at the antenna.
      */
     //% weight=212
     //% blockId=grove_pn532_getNFCID
     //% block="get the unique NFC ID of the Tag"
     //% parts="grove_pn532"
-    export function getNFCID(nr: number): string {
+    export function getNFCID(): string {
         findPassiveTarget();
         
         if (targetID) {
