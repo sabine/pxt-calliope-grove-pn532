@@ -407,8 +407,9 @@ namespace grove_pn532 {
             
             for (let i=0;i<blocksNeeded;i++) {
               let blockData = [];
-              let len = charsToWrite.length - (blocksNeeded - 1)*16;
               /*
+              let len = charsToWrite.length - (blocksNeeded - 1)*16;
+              
               if (i < blocksNeeded - 1) len = 16;
               
               for (let j=0;j<len;j++) blockData[j] = charsToWrite.charCodeAt(j);
