@@ -354,6 +354,7 @@ namespace grove_pn532 {
         }
     }
     
+    let dataBlocks = [5,6,8,9,10,12];
     /**
      * Converts number to string
      */
@@ -391,18 +392,34 @@ namespace grove_pn532 {
             if (DEBUG_SERIAL)
                 debug_message("found target to write to");
 
-            let maxStringLength = 15;
+            // 5 blocks
+            let maxStringLength = 16+16+16+16+16+16;
+            
             if (charsToWrite.length > maxStringLength) {
                 if (DEBUG_SERIAL)
                     debug_message("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
                 return;
             }
 
-            let data = [charsToWrite.length];
-            for (let j=0;j<charsToWrite.length;j++) data[j+1] = charsToWrite.charCodeAt(j);
-            for (let k=charsToWrite.length;k<15;k++) data[k+1] = 0;
+            let blocksNeeded = charsToWrite.length/16+1;
             
-            write16Bytes(data, 0x04);
+            let data = [];
+            for (let i=0;i<blocksNeeded;i++) {
+              let blockData = [];
+              let len = charsToWrite.length - (blocksNeeded - 1)*16;
+              if (i < blocksNeeded - 1) len = 16;
+              
+              for (let j=0;j<len;j++) blockData[j] = charsToWrite.charCodeAt(j);
+              for (let j=len;j<16;j++) blockData[j] = 0;
+              data[i] = blockData;
+            }
+            
+            // header block contains only the length of the text
+            let header = [charsToWrite.length];
+            for (let k=1;k<16;k++) header[k] = 0;
+            write16Bytes(header, 0x04);
+            
+            for (let j=0;j<blocksNeeded;j++) write16Bytes(data[j], dataBlocks[j]);
 
         } else {
             if (DEBUG_SERIAL)
@@ -435,11 +452,13 @@ namespace grove_pn532 {
         let textMessage = "";
         if (targetID == 1) {
             let outputFrame = read16Bytes(0x04);
-
-            let message = outputFrame.slice(9, 16);
-            let messageLength = message[0];
+            let messageLength = outputFrame[9];
+            
+            let blocksNeeded = messageLength/16+1;
                         
-            for (let i=1;i<=messageLength;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));            
+            for (let j=0;j<blocksNeeded;j++) {
+              let message = read16Bytes(dataBlocks[j]).slice(9,16);
+              for (let i=1;i<=messageLength;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));            
         }
 
         if (DEBUG_SERIAL)
