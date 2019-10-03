@@ -337,10 +337,10 @@ namespace grove_pn532 {
     function authenticate(address: number, key: number[]): boolean {
 
         //InSelect
-        let selectCommand = [0xD4, 0x54, targetID];
-        writeBuffer(makeCommand(selectCommand));
-        checkOutput(ACK_FRAME);
-        readFrame();
+        //let selectCommand = [0xD4, 0x54, targetID];
+        //writeBuffer(makeCommand(selectCommand));
+        //checkOutput(ACK_FRAME);
+        //readFrame();
     
     
         // InDataExchange, authenticate with key A 0x60
