@@ -302,13 +302,8 @@ namespace grove_pn532 {
         }
     }
 
-    function authenticate(address: number, key: number[]): void {
-
-        // authenticate to the sector the address is in
-	let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address/4], concatNumArr(key, targetNFCID));
-
+    function makeCommand(command: number[]) : number[] {
         let len = command.length;
-        //Checksum for the length;
         let length_checksum = 0x100 - (len % 0x100);
 
         let preCommand = [0x00, 0x00, 0xFF, len, length_checksum];
@@ -321,6 +316,17 @@ namespace grove_pn532 {
 
 
         let fullCommand = concatNumArr(concatNumArr(preCommand, command), postCommand);
+
+	return fullCommand;
+    }
+
+
+    function authenticate(address: number, key: number[]): void {
+
+        // authenticate to the sector the address is in
+	let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address/4], concatNumArr(key, targetNFCID));
+
+	let fullCommand = makeCommand(command);
 
 	if (DEBUG_SERIAL) {
   	debug_message("trying to authenticate with this command: ");
