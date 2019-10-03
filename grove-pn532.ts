@@ -500,7 +500,7 @@ namespace grove_pn532 {
         let textMessage = "";
         if (targetID == 1) { //Did we find a device?
             if (DEBUG_SERIAL) {
-                for (let j = 0; j < 16; j++)
+                for (let j = 1; j < 16; j++)
                     read16Bytes(j);
             }
 
