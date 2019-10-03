@@ -84,12 +84,16 @@ namespace grove_pn532 {
         //authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
-        let readData: number[] = [0x00, 0x00, 0xFF, 0x05, 0xFB, 0xD4, 0x40, 0x01, 0x30, address, 0xBB - address, 0x00];
+        let command: number[] = [0xD4, 0x40, 0x01, 0x30, address];
+        
+        let fullCommand = makeCommand(command);
 
-        if (DEBUG_SERIAL)
+        if (DEBUG_SERIAL) {
             debug_message("Reading from address " + decToHex(address));
+            printBufferAsHex(fullCommand);
+        }
 
-        writeBuffer(readData);
+        writeBuffer(fullCommand);
 
         // check ack frame
         if (!checkOutput(ACK_FRAME)) {
