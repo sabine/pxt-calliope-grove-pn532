@@ -404,17 +404,19 @@ namespace grove_pn532 {
             let blocksNeeded = charsToWrite.length/16+1;
             
             let data : number[][] = [];
-            /*
+            
             for (let i=0;i<blocksNeeded;i++) {
               let blockData = [];
               let len = charsToWrite.length - (blocksNeeded - 1)*16;
+              /*
               if (i < blocksNeeded - 1) len = 16;
               
               for (let j=0;j<len;j++) blockData[j] = charsToWrite.charCodeAt(j);
               for (let j=len;j<16;j++) blockData[j] = 0;
+              */
               data[i] = blockData;
             }
-            */
+            
             // header block contains only the length of the text
             /*
             let header = [charsToWrite.length];
