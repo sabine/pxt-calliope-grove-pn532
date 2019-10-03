@@ -373,9 +373,9 @@ namespace grove_pn532 {
      */
     //% weight=210
     //% blockId=grove_pn532_textrecord_write
-    //% block="write to NFC tag %charsToWrite"
+    //% block="write to NFC tag %message"
     //% parts="grove_pn532"
-    export function writeText(charsToWrite: string) {
+    export function writeText(message: string) {
 
         if (DEBUG_SERIAL)
             debug_message("Starting to write...");
@@ -395,15 +395,11 @@ namespace grove_pn532 {
                 debug_message("found target to write to");
 
             let maxStringLength = 16+16+16+16+16+16;
-            let message : string = charsToWrite;
             
-            if (charsToWrite.length > maxStringLength) {
-            /*
-                message = charsToWrite.slice(0, maxStringLength);
-            */
+            if (message.length > maxStringLength) {
+                message = message.substr(0, maxStringLength);
                 if (DEBUG_SERIAL)
-                    debug_message("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
-                return;
+                    debug_message("String length of " + message.length + "is too high.\nNeeds to be <=" + maxStringLength);
             }
 
             let blocksNeeded = message.length/16+1;
