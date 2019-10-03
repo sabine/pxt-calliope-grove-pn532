@@ -510,7 +510,7 @@ namespace grove_pn532 {
     //% blockId=grove_pn532_textrecord_read
     //% block="read text message in NFC tag"
     //% parts="grove_pn532"
-    export function readNDEFText(): string {
+    export function readText(): string {
         if (!running) {
             wakeup();
             basic.pause(50);
@@ -522,7 +522,10 @@ namespace grove_pn532 {
         let textMessage = "";
         if (targetID == 1) { //Did we find a device?
             if (DEBUG_SERIAL) {
-                read16Bytes(0);
+                let mem = [];
+                for(let j=0;j<16;j++) mem.push(read16Bytes(0));
+                
+                for(k=0;k<16;k++) printBufferAsHex(mem[k]);
             }
 
             let outputFrame = read16Bytes(0x04);
