@@ -521,12 +521,12 @@ namespace grove_pn532 {
 
         let textMessage = "";
         if (targetID == 1) { //Did we find a device?
-            if (DEBUG_SERIAL) {
+            /*if (DEBUG_SERIAL) {
                 let mem = [];
                 for(let j=0;j<16;j++) mem[j] = read16Bytes(j);
                 
                 for(let k=0;k<16;k++) printBufferAsHex(mem[k]);
-            }
+            }*/
 
             let outputFrame = read16Bytes(0x04);
             if (outputFrame != null) {
