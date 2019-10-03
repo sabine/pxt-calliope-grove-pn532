@@ -458,13 +458,13 @@ namespace grove_pn532 {
         if (targetID == 1) {
             let outputFrame = read16Bytes(0x04);
             let messageLength = outputFrame[9];
-            /*
+            
             let blocksNeeded = messageLength/16+1;
                         
             for (let j=0;j<blocksNeeded;j++) {
               let message = read16Bytes(dataBlocks[j]).slice(9,16);
               for (let i=1;i<=messageLength;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));            
-            */
+            
         }
 
         if (DEBUG_SERIAL)
