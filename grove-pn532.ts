@@ -259,7 +259,8 @@ namespace grove_pn532 {
     }
 
     function findPassiveTarget(): void {
-        targetID = 0;
+	    targetID = 0;
+	    targetNFCID = [0,0,0,0];
 
         // InListPassiveTarget: 1 target, 106 kbps type A (ISO14443 Type A)
         const listTarget: number[] = [0x00, 0x00, 0xFF, 0x04, 0xFC, 0xD4, 0x4A, 0x01, 0x00, 0xE1, 0x00];
@@ -281,6 +282,19 @@ namespace grove_pn532 {
 	    debug_message("Found passive target");
 	    printBufferAsHex(outputFrame);
 	    printNrArrayAsHex(targetNFCID);
+	  }
+	} else {
+          basic.showLeds(`
+	          . # # . .
+	          . . . # .
+	          . . # . .
+	          . . . . .
+	          . . # . .
+		  `)
+
+	  if (DEBUG_SERIAL) {
+		debug_message("No passive target found");
+		printBufferAsHex(outputFrame);
 	  }
         }
     }
