@@ -19,6 +19,9 @@ namespace grove_pn532 {
     let targetKey = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF];
     let running = false;
     // if PN532 isn't running, no reading will be possible
+    
+    // in these blocks, we store text data:
+    let dataBlocks = [5,6,8,9,10,12];
 
     /**
      * ACK frame as specified in the PN532 User Manual (Page 30).
@@ -353,8 +356,7 @@ namespace grove_pn532 {
           return "";
         }
     }
-    
-    let dataBlocks = [5,6,8,9,10,12];
+
     /**
      * Converts number to string
      */
@@ -469,6 +471,7 @@ namespace grove_pn532 {
               if(j<blocksNeeded -1) len=16
               for (let i=1;i<=len;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));            
               */
+            }
         }
 
         if (DEBUG_SERIAL)
