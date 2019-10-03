@@ -88,7 +88,6 @@ namespace grove_pn532 {
 
         if (DEBUG_SERIAL) {
             debug_message("read frame:");
-            printBufferAsHex(buffer);
             printBufferAsHex(outputFrame);
         }
 
@@ -275,6 +274,10 @@ namespace grove_pn532 {
 
         basic.showIcon(IconNames.SmallHeart);
 
+        if (DEBUG_SERIAL) {
+          debug_message("Suche NFC Tag (InListPassiveTarget)");
+        }
+        
         // InListPassiveTarget: 1 target, 106 kbps type A (ISO14443 Type A)
         const listTarget: number[] = [0x00, 0x00, 0xFF, 0x04, 0xFC, 0xD4, 0x4A, 0x01, 0x00, 0xE1, 0x00];
         writeBuffer(listTarget);
@@ -292,8 +295,7 @@ namespace grove_pn532 {
             targetNFCID[3] = outputFrame[15];
 
             if (DEBUG_SERIAL) {
-                debug_message("Found passive target");
-                printBufferAsHex(outputFrame);
+                debug_message("NFC Tag gefunden!");
                 printNrArrayAsHex(targetNFCID);
             }
 
@@ -308,7 +310,7 @@ namespace grove_pn532 {
 		  `) 
 
             if (DEBUG_SERIAL) {
-                debug_message("No passive target found");
+                debug_message("Kein NFC Tag gefunden.");
                 printBufferAsHex(outputFrame);
             }
         }
@@ -340,7 +342,7 @@ namespace grove_pn532 {
         let fullCommand = makeCommand(command);
 
         if (DEBUG_SERIAL) {
-            debug_message("trying to authenticate with this command: ");
+            debug_message("Versuche zu authentifizieren: ");
             printNrArrayAsHex(fullCommand);
         }
 
