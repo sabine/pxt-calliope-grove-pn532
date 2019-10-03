@@ -102,7 +102,7 @@ namespace grove_pn532 {
     function read16Bytes(address: number) {
 
         let authenticated = authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
-        
+
         basic.pause(70);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
@@ -126,48 +126,31 @@ namespace grove_pn532 {
     }
 
     /**
-     * Writes 4 bytes to a specified address on the chip.
-     * @param data The data to write. This array has to be a length of 4.
+     * Writes 16 bytes to a specified address on the chip.
+     * @param data The data to write. This array has to be a length of 16.
      * @param address The address to write to.
      * @returns true if writing the data to the tag was successful.
      */
-    function write4Bytes(data: number[], address: number) {
+    function write16Bytes(data: number[], address: number) {
 
         if (DEBUG_SERIAL) {
             debug_message("writing to " + decToHex(address) + ": ");
             printNrArrayAsHex(data);
         }
 
-        if (data.length != 4) {
+        if (data.length != 16) {
             if (DEBUG_SERIAL)
-                debug_message("You passed " + data.length + " bytes and not 4 for write4Bytes()");
+                debug_message("You passed " + data.length + " bytes and not 16 for write16Bytes()");
 
         }
 
-        if (address > 0x28) {
-            //TODO: Support different devices.
-            //We dont want to lock the nfc tag. This happens if we write to 0x29 on some tags.
-            if (DEBUG_SERIAL) {
-                debug_message("We tried to write to page " + decToHex(address) + ". Aborting!");
-                debug_message("Tried to write the following data")
-                printNrArrayAsHex(data);
-            }
-
-        }
-
-        let command = concatNumArr([0xD4, 0x40, targetID, 0xA2, address], data);
+        let command = concatNumArr([0xD4, 0x40, targetID, 0xA0, address], data);
 
         let fullCommand = makeCommand(command);
 
         writeBuffer(fullCommand);
 
-        // check ack frame
-        if (!checkOutput(ACK_FRAME)) {
-            if (DEBUG_SERIAL)
-                debug_message("ACK check failed!");
-
-        }
-
+        checkOutput(ACK_FRAME);
     }
 
     /**
@@ -275,9 +258,9 @@ namespace grove_pn532 {
         basic.showIcon(IconNames.SmallHeart);
 
         if (DEBUG_SERIAL) {
-          debug_message("Suche NFC Tag (InListPassiveTarget)");
+            debug_message("Suche NFC Tag (InListPassiveTarget)");
         }
-        
+
         // InListPassiveTarget: 1 target, 106 kbps type A (ISO14443 Type A)
         const listTarget: number[] = [0x00, 0x00, 0xFF, 0x04, 0xFC, 0xD4, 0x4A, 0x01, 0x00, 0xE1, 0x00];
         writeBuffer(listTarget);
@@ -341,8 +324,8 @@ namespace grove_pn532 {
         //writeBuffer(makeCommand(selectCommand));
         //checkOutput(ACK_FRAME);
         //readFrame();
-    
-    
+
+
         // InDataExchange, authenticate with key A 0x60
         let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address], concatNumArr(key, targetNFCID));
 
@@ -358,53 +341,14 @@ namespace grove_pn532 {
 
         let authResponse = readFrame();
         let success = (authResponse[7] == 0x00);
-        
+
         /*
         if (DEBUG_SERIAL) {
-            if(success) debug_message("Erfolgreich! ") else debug_message("Fehlgeschlagen!");
+        if(success) debug_message("Erfolgreich! ") else debug_message("Fehlgeschlagen!");
         }
-        */
-        
+         */
+
         return success;
-    }
-
-    /**
-     * Formats a tag as ndef format.
-     */
-    export function formatAsNdef(): void {
-        if (DEBUG_SERIAL)
-            debug_message("Starting to format...");
-
-        if (!running) {
-            wakeup();
-            basic.pause(50);
-            // we have to wait...
-        }
-
-        findPassiveTarget();
-
-        if (targetID == 1) { //Did we find a device?
-
-            let address = 0x04;
-
-            let page1 = [0x03, 0x04, 0xD8, 0x00];
-            write4Bytes(page1, address++);
-
-            let page2 = [0x00, 0x00, 0xFE, 0x00];
-            write4Bytes(page2, address++);
-
-            let zeroArr4 = [0x00, 0x00, 0x00, 0x00];
-            while (address < 0x28) {
-                write4Bytes(zeroArr4, address++);
-            }
-
-        } else {
-            if (DEBUG_SERIAL)
-                debug_message("Did not find a target when trying to format");
-        }
-
-        if (DEBUG_SERIAL)
-            debug_message("formatting finished...");
     }
 
     /**
@@ -419,14 +363,13 @@ namespace grove_pn532 {
     }
 
     /**
-     * Write NDEF text record to Mifare Ultralight tag.
+     * Write text to Mifare Classic tag.
      */
     //% weight=210
     //% blockId=grove_pn532_textrecord_write
     //% block="write to NFC tag %charsToWrite"
     //% parts="grove_pn532"
-    export function writeNDEFText(charsToWrite: string) {
-        basic.showIcon(IconNames.Square);
+    export function writeText(charsToWrite: string) {
 
         if (DEBUG_SERIAL)
             debug_message("Starting to write...");
@@ -434,64 +377,28 @@ namespace grove_pn532 {
         if (!running) {
             wakeup();
             basic.pause(50);
-            // we have to wait...
         }
 
         findPassiveTarget();
 
         if (targetID == 1) { //Did we find a device?
+        
+            basic.showIcon(IconNames.Square);
 
             if (DEBUG_SERIAL)
                 debug_message("found target to write to");
 
-            //FIXME: Redundent initilization of the tag?.
-            formatAsNdef();
-            //TODO: More safety checks with write4Bytes() return value
-
-            //We can write to every page before 0x29 and after 0x03
-            //We also have to reserve 1 bit for the 0xFE at the end.
-            let maxStringLength = ((0x29 - 0x04) * 4) - 1;
+            let maxStringLength = 15;
             if (charsToWrite.length > maxStringLength) {
                 if (DEBUG_SERIAL)
                     debug_message("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
                 return;
             }
 
-            //First 4 pages are reserved and read only. The following 2 pages are NDEF information.
-            let address = 0x04;
-
-            //TODO: Do we want to do more than just short records?
-            //First 2 pages are set. We always use a short record.
-            //Second byte is the payload length.
-            //6th byte is 'T' for the type of our entry (plain text).
-            //7th byte is the length of the language code.
-            //8th and 9th byte are the language code ("de" for german) in our case.
-            let page1: number[] = [0x03, 0x07 + charsToWrite.length, 0xD1, 0x01];
-            write4Bytes(page1, address++);
-            //ToDo: 0x08 berechnen (Statusbyte+Ländercodebytes+Plaintextbytes)
-            let page2: number[] = [charsToWrite.length + 0x03, 0x54, 0x02, 0x64];
-            write4Bytes(page2, address++);
-            let pageToAdd: number[] = [0x65];
-
-            //Go through the string and write the string to the nfc tag 4 bytes at a time.
-            let posInString = 0;
-            while (posInString < charsToWrite.length) {
-                pageToAdd[pageToAdd.length] = charsToWrite.charCodeAt(posInString++);
-
-                if (pageToAdd.length == 4) {
-                    write4Bytes(pageToAdd, address++);
-                    pageToAdd = [];
-                }
-            }
-
-            //We cycled through the whole string. Add 0xFE to signal the end of the entry
-            pageToAdd[pageToAdd.length] = 0xFE;
-            while (pageToAdd.length < 4) {
-                //Fill with 0x00 because we always want to write exactly 4 bytes.
-                pageToAdd[pageToAdd.length] = 0x00;
-            }
-
-            write4Bytes(pageToAdd, address++);
+            let data = [charsToWrite.length];
+            for (let j=0;j<charsToWrite.length;j++) data[j+1] = charsToWrite.charCodeAt(j);
+            
+            write16Bytes(data, 0x04);
 
         } else {
             if (DEBUG_SERIAL)
@@ -503,8 +410,11 @@ namespace grove_pn532 {
 
     }
 
+    // never write blocks 3+i*4 (sector trailers with keys)
+    // data can be stored in 4,5,6,8,9,10,12,13,14
+
     /**
-     * Read text from Mifare Ultralight tag.
+     * Read text from Mifare Classic tag.
      */
     //% weight=209
     //% blockId=grove_pn532_textrecord_read
@@ -520,94 +430,14 @@ namespace grove_pn532 {
 
         let textMessage = "";
         if (targetID == 1) {
-            if (DEBUG_SERIAL) {
-                //let mem = [];
-                for(let j=0;j<16;j++) read16Bytes(j);
-                
-                //for(let k=0;k<16;k++) printBufferAsHex(mem[k]);
-            }
-
             let outputFrame = read16Bytes(0x04);
-            if (outputFrame != null) {
-                let startByte = -1;
-                let messageLength = -1;
-                // skip RDY, PREAMBLE, START CODE, LEN, LCS, TFI, COMMAND CODE, STATUS
-                // skip also DCS, POSTAMBLE at the end
-                for (let l = 9; l < outputFrame.length - 2; l++) {
-                    let m = outputFrame.getNumber(NumberFormat.UInt8LE, l);
-                    let n = outputFrame.getNumber(NumberFormat.UInt8LE, l + 5);
-                    //where is the first NDEF message with message type == text?
-                    if (m == 0x03 &&
-                        n == 0x54) {
 
-                        //The last 6 bits (0x3F) of the status byte are the length of the IANA language code field
-                        // Text length = messageLength - language code length - 1
-                        messageLength = outputFrame.getNumber(NumberFormat.UInt8LE, l + 4) -
-                            (outputFrame.getNumber(NumberFormat.UInt8LE, l + 6) & 0x3F) - 1;
-
-                        startByte = l + 7 + (outputFrame.getNumber(NumberFormat.UInt8LE, l + 6) & 0x3F);
-
-                        if (DEBUG_SERIAL)
-                            debug_message("found NDEF message with message type text at " + startByte + " and length " + messageLength);
-
-                        break;
-                    }
-                }
-
-                if (startByte != -1 && messageLength > 0) {
-
-                    let amountRead = 27 - startByte - 2; // 27 bytes normal information frame w/ 16 bytes packet data, whereof 2 for postamble and data checksum
-                    let currentPage = 0x04;
-                    while (true) {
-
-                        if (DEBUG_SERIAL)
-                            debug_message("reading byte " + startByte + " from page " + decToHex(currentPage));
-
-                        if (startByte >= outputFrame.length - 2) {
-                            //We need to read more bytes
-
-                            messageLength -= amountRead;
-
-                            if (DEBUG_SERIAL)
-                                debug_message("messageLength left: " + messageLength);
-
-                            if (messageLength <= 0) {
-                                //Reached the end of input.
-                                break;
-                            }
-
-                            startByte = 9;
-                            currentPage += 0x04; //We read 4 pages, read the next ones now
-                            if (DEBUG_SERIAL)
-                                debug_message("Getting a new page with address " + decToHex(currentPage));
-                            outputFrame = read16Bytes(currentPage);
-                            amountRead = 16;
-
-                            if (outputFrame == null) {
-                                //Something has gone terribly wrong. abort!
-                                if (DEBUG_SERIAL)
-                                    debug_message("error reading from address " + decToHex(currentPage) + "! Aborting");
-                                break;
-                            }
-
-                        }
-
-                        if (outputFrame.getNumber(NumberFormat.UInt8LE, startByte) == 0xFE) {
-                            //We reached the end of our record. Stop reading.
-                            //Theoretically we should not reach here since we read till exectly the character before
-                            if (DEBUG_SERIAL)
-                                debug_message("Found end of record (0xFE)! This shouldnt happen..");
-                            break;
-                        }
-
-                        //ToDo: read UTF-8
-                        textMessage += String.fromCharCode(outputFrame.getNumber(NumberFormat.UInt8LE, startByte));
-                        startByte++;
-                        if (DEBUG_SERIAL)
-                            debug_message("Got char " + String.fromCharCode(outputFrame.getNumber(NumberFormat.UInt8LE, startByte)));
-                    }
-                }
-            }
+            let messageLength = outputFrame[0];
+            
+            //let mbuffer = outputFrame.splice(1, messageLength)
+            //if (messageLength > 0) textMessage +=
+            
+            for (let i=1;i<messageLength;i++) textMessage += String.fromCharCode(outputFrame.getNumber(NumberFormat.UInt8LE, i));            
         }
 
         if (DEBUG_SERIAL)
