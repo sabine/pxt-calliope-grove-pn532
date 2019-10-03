@@ -431,7 +431,7 @@ namespace grove_pn532 {
             let message = outputFrame.slice(9, 16);
             let messageLength = message[0];
                         
-            for (let i=1;i<messageLength;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));            
+            for (let i=1;i<=messageLength;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));            
         }
 
         if (DEBUG_SERIAL)
