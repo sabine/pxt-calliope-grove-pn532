@@ -21,7 +21,7 @@ namespace grove_pn532 {
     // if PN532 isn't running, no reading will be possible
     
     // in these blocks, we store text data:
-    let dataBlocks = [5,6,8,9,10,12];
+    let dataBlocks = [5,6,8,9,10,12,13,14];
 
     /**
      * ACK frame as specified in the PN532 User Manual (Page 30).
@@ -394,14 +394,16 @@ namespace grove_pn532 {
             if (DEBUG_SERIAL)
                 debug_message("found target to write to");
 
-            // 5 blocks
             let maxStringLength = 16+16+16+16+16+16;
             let message : string = charsToWrite;
             
             if (charsToWrite.length > maxStringLength) {
+            /*
                 message = charsToWrite.slice(0, maxStringLength);
+            */
                 if (DEBUG_SERIAL)
                     debug_message("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
+                return;
             }
 
             let blocksNeeded = message.length/16+1;
