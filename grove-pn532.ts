@@ -342,6 +342,7 @@ namespace grove_pn532 {
 
     function authenticate(address: number, key: number[]): boolean {
 
+        //InSelect
         let selectCommand = [0xD4, 0x54, targetID];
         writeBuffer(makeCommand(selectCommand));
         checkOutput(ACK_FRAME);
@@ -527,8 +528,7 @@ namespace grove_pn532 {
         let textMessage = "";
         if (targetID == 1) { //Did we find a device?
             if (DEBUG_SERIAL) {
-                for (let j = 1; j < 16; j++)
-                    read16Bytes(j);
+                read16Bytes(0);
             }
 
             let outputFrame = read16Bytes(0x04);
