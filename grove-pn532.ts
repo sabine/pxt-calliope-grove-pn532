@@ -1,9 +1,9 @@
 /**
-* Functions for the Seeedstudio Grove NFC.
-* WIP: Reads NDEF text records from ISO14443-3A / Mifare
-*
-* @author Mirek Hancl, Alexander Pfanne
-*/
+ * Functions for the Seeedstudio Grove NFC.
+ * WIP: Reads NDEF text records from ISO14443-3A / Mifare
+ *
+ * @author Mirek Hancl, Alexander Pfanne
+ */
 
 //% weight=2 color=#1174EE icon="\uf086" block="Grove NFC Tag"
 //% parts="grove_pn532"
@@ -15,29 +15,27 @@ namespace grove_pn532 {
 
     let targetID = 0;
     // if ISO14443-A / Mifare target found, targetID will be 1
-    let targetNFCID = [0,0,0,0];
+    let targetNFCID = [0, 0, 0, 0];
     let running = false;
     // if PN532 isn't running, no reading will be possible
 
-	/** 
-	 * ACK frame as specified in the PN532 User Manual (Page 30).
-	 * Used for synchronization or 
-	 * to check if a previous frame has been recieved successfully.
-	 */
+    /**
+     * ACK frame as specified in the PN532 User Manual (Page 30).
+     * Used for synchronization or
+     * to check if a previous frame has been recieved successfully.
+     */
     const ACK_FRAME: number[] = [0x01, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00];
 
-
-
     function debug_message(text: string): void {
-    // music.playTone(262, music.beat(BeatFraction.Whole));
-      serial.writeLine(text);
+        // music.playTone(262, music.beat(BeatFraction.Whole));
+        serial.writeLine(text);
     }
 
-	/**
-	 * Compares an array against output of the same length.
-	 * @param arr The array to compare the device output against.
-	 * @returns true if the output matches the passed array, false otherwise.
-	 */
+    /**
+     * Compares an array against output of the same length.
+     * @param arr The array to compare the device output against.
+     * @returns true if the output matches the passed array, false otherwise.
+     */
     function checkOutput(arr: number[]): boolean {
         let outputFrame = pins.i2cReadBuffer(ADDRESS, arr.length);
         for (let i = 0; i <= arr.length - 1; i++) {
@@ -61,12 +59,12 @@ namespace grove_pn532 {
         return true;
     }
 
-	/**
-         * Writes an array as buffer to the target device.
-	 * The array should be a normal information frame 
-	 * with the format specified in the PN532 User Manual (Page 28).
-	 * @param arr The array to write to the device as a buffer.
-	 */
+    /**
+     * Writes an array as buffer to the target device.
+     * The array should be a normal information frame
+     * with the format specified in the PN532 User Manual (Page 28).
+     * @param arr The array to write to the device as a buffer.
+     */
     function writeBuffer(arr: number[]): void {
         let inputFrame = pins.createBuffer(arr.length);
         for (let i = 0; i <= inputFrame.length - 1; i++) {
@@ -76,42 +74,45 @@ namespace grove_pn532 {
         basic.pause(50);
     }
 
-	/**
-	 * Reads 16 bytes of data from the device.
-	 * @param address The address to read from
-	 * @returns A buffer filled with the data we recieved. null if reading failed.
-	 */
-     function read16Bytes(address: number) {
+    /**
+     * Reads 16 bytes of data from the device.
+     * @param address The address to read from
+     * @returns A buffer filled with the data we recieved. null if reading failed.
+     */
+    function read16Bytes(address: number) {
 
-         authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
+        authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let readData: number[] = [0x00, 0x00, 0xFF, 0x05, 0xFB, 0xD4, 0x40, 0x01, 0x30, address, 0xBB - address, 0x00];
 
-        if (DEBUG_SERIAL) debug_message("Reading from address " + decToHex(address));
+        if (DEBUG_SERIAL)
+            debug_message("Reading from address " + decToHex(address));
 
         writeBuffer(readData);
 
         // check ack frame
         if (!checkOutput(ACK_FRAME)) {
-            if (DEBUG_SERIAL) debug_message("ACK check failed!");
+            if (DEBUG_SERIAL)
+                debug_message("ACK check failed!");
 
         }
 
-	//        if (DEBUG_SERIAL) debug_message("Getting device outputFrame");
+        //        if (DEBUG_SERIAL) debug_message("Getting device outputFrame");
 
         // we'll receive an normal information frame (see 6.2.1.1 in UM) with 16 bytes of packet data
         let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
 
         if (outputFrame[0] != 0x01) {
-            if (DEBUG_SERIAL) debug_message("outputFrame[0] != 0x01");
+            if (DEBUG_SERIAL)
+                debug_message("outputFrame[0] != 0x01");
 
         }
 
-	if (DEBUG_SERIAL) {
-	//	  debug_message("Got outputBuffer!");
-	  printBufferAsHex(outputFrame);
-	}
+        if (DEBUG_SERIAL) {
+            //	  debug_message("Got outputBuffer!");
+            printBufferAsHex(outputFrame);
+        }
 
         return outputFrame;
     }
@@ -130,7 +131,8 @@ namespace grove_pn532 {
         }
 
         if (data.length != 4) {
-            if (DEBUG_SERIAL) debug_message("You passed " + data.length + " bytes and not 4 for write4Bytes()");
+            if (DEBUG_SERIAL)
+                debug_message("You passed " + data.length + " bytes and not 4 for write4Bytes()");
 
         }
 
@@ -143,20 +145,20 @@ namespace grove_pn532 {
                 printNrArrayAsHex(data);
             }
 
-	    }
+        }
 
         let command = concatNumArr([0xD4, 0x40, targetID, 0xA2, address], data);
 
-	let fullCommand = makeCommand(command);
+        let fullCommand = makeCommand(command);
 
         writeBuffer(fullCommand);
 
         // check ack frame
         if (!checkOutput(ACK_FRAME)) {
-            if (DEBUG_SERIAL) debug_message("ACK check failed!");
+            if (DEBUG_SERIAL)
+                debug_message("ACK check failed!");
 
         }
-
 
     }
 
@@ -166,7 +168,7 @@ namespace grove_pn532 {
      * @param secondArr The array to put at the end of the first.
      * @returns The array that is firstArr with secondArr at the end.
      */
-    function concatNumArr(firstArr: number[], secondArr: number[]): number[] {
+    function concatNumArr(firstArr: number[], secondArr: number[]): number[]{
 
         let result: number[] = [];
 
@@ -185,22 +187,22 @@ namespace grove_pn532 {
      * Prints an array of numbers to the console in hex representation.
      * @param arr The array of numbers to print.
      */
-     function printNrArrayAsHex(arr: number[]): void {
-        let result : string = "";
+    function printNrArrayAsHex(arr: number[]): void {
+        let result: string = "";
         for (let i = 0; i < arr.length; i++) {
             result += " " + decToHex(arr[i])
         }
-        debug_message(result+"\n");
-     }
+        debug_message(result + "\n");
+    }
 
-     function printBufferAsHex(buf: Buffer): void {
-       let result : string = "";
-       for (let i = 0; i < buf.length; i++) {
-         let m = buf.getNumber(NumberFormat.UInt8LE, i);
-         result +=" " + decToHex(m);
-	 }
-	 debug_message(result+"\n");
-     }
+    function printBufferAsHex(buf: Buffer): void {
+        let result: string = "";
+        for (let i = 0; i < buf.length; i++) {
+            let m = buf.getNumber(NumberFormat.UInt8LE, i);
+            result += " " + decToHex(m);
+        }
+        debug_message(result + "\n");
+    }
 
     /**
      * Gets the hex number representation of a integer as a string.
@@ -215,7 +217,6 @@ namespace grove_pn532 {
         let chars: string[] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
         let result: string = "";
         let nrCopy = decNr;
-
         while (nrCopy > 0) {
             let remainder = nrCopy % 16;
             result = chars[remainder] + result;
@@ -229,10 +230,10 @@ namespace grove_pn532 {
         return result;
     }
 
-	/**
-	 * Waking up the device and
-	 * Disabling the Security Access Module (SAM) since we dont use it.
-	 */
+    /**
+     * Waking up the device and
+     * Disabling the Security Access Module (SAM) since we dont use it.
+     */
     function wakeup(): void {
         // just to be sure...
         pins.i2cWriteNumber(ADDRESS, 0, NumberFormat.UInt8LE);
@@ -254,14 +255,17 @@ namespace grove_pn532 {
         if (validAck && validWakeupOK) {
             running = true;
         } else {
-            if (DEBUG_SERIAL) debug_message("Waking up failed!");
+            if (DEBUG_SERIAL)
+                debug_message("Waking up failed!");
         }
     }
 
     function findPassiveTarget(): void {
-	    targetID = 0;
-	    targetNFCID = [0,0,0,0];
+        targetID = 0;
+        targetNFCID = [0, 0, 0, 0];
 
+        basic.showIcon(IconNames.SmallHeart);
+        
         // InListPassiveTarget: 1 target, 106 kbps type A (ISO14443 Type A)
         const listTarget: number[] = [0x00, 0x00, 0xFF, 0x04, 0xFC, 0xD4, 0x4A, 0x01, 0x00, 0xE1, 0x00];
         writeBuffer(listTarget);
@@ -272,68 +276,70 @@ namespace grove_pn532 {
         // check response
         let outputFrame = pins.i2cReadBuffer(ADDRESS, 22);
         if (outputFrame[0] == 0x01 && outputFrame[8] == 0x01) {
-	  targetID = 1;
-          targetNFCID[0] = outputFrame[12];
-          targetNFCID[1] = outputFrame[13];
-          targetNFCID[2] = outputFrame[14];
-          targetNFCID[3] = outputFrame[15];
+            targetID = 1;
+            targetNFCID[0] = outputFrame[12];
+            targetNFCID[1] = outputFrame[13];
+            targetNFCID[2] = outputFrame[14];
+            targetNFCID[3] = outputFrame[15];
 
-	  if (DEBUG_SERIAL) {
-	    debug_message("Found passive target");
-	    printBufferAsHex(outputFrame);
-	    printNrArrayAsHex(targetNFCID);
-	  }
-	} else {
-          basic.showLeds(`
+            if (DEBUG_SERIAL) {
+                debug_message("Found passive target");
+                printBufferAsHex(outputFrame);
+                printNrArrayAsHex(targetNFCID);
+            }
+            
+            basic.showIcon(IconNames.Yes);
+        } else {
+            basic.showLeds(`
 	          . # # . .
 	          . . . # .
 	          . . # . .
 	          . . . . .
 	          . . # . .
-		  `)
+		  `) 
 
-	  if (DEBUG_SERIAL) {
-		debug_message("No passive target found");
-		printBufferAsHex(outputFrame);
-	  }
+            if (DEBUG_SERIAL) {
+                debug_message("No passive target found");
+                printBufferAsHex(outputFrame);
+            }
         }
     }
 
-    function makeCommand(command: number[]) : number[] {
+    function makeCommand(command: number[]): number[]{
         let len = command.length;
         let length_checksum = 0x100 - (len % 0x100);
 
         let preCommand = [0x00, 0x00, 0xFF, len, length_checksum];
 
         let allBytes = 0;
-        for (let i = 0; i < command.length; i++) allBytes += command[i];
+        for (let i = 0; i < command.length; i++)
+            allBytes += command[i];
         let data_checksum = 0x100 - (allBytes % 0x100);
 
         let postCommand = [data_checksum, 0x00];
 
-
         let fullCommand = concatNumArr(concatNumArr(preCommand, command), postCommand);
 
-	return fullCommand;
+        return fullCommand;
     }
-
 
     function authenticate(address: number, key: number[]): void {
 
         // authenticate to the sector the address is in
-	let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address/4], concatNumArr(key, targetNFCID));
+        let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address / 4], concatNumArr(key, targetNFCID));
 
-	let fullCommand = makeCommand(command);
+        let fullCommand = makeCommand(command);
 
-	if (DEBUG_SERIAL) {
-  	debug_message("trying to authenticate with this command: ");
-	  printNrArrayAsHex(fullCommand);
-	}
+        if (DEBUG_SERIAL) {
+            debug_message("trying to authenticate with this command: ");
+            printNrArrayAsHex(fullCommand);
+        }
 
-	writeBuffer(fullCommand);
+        writeBuffer(fullCommand);
 
         if (!checkOutput(ACK_FRAME)) {
-            if (DEBUG_SERIAL) debug_message("ACK check failed!");
+            if (DEBUG_SERIAL)
+                debug_message("ACK check failed!");
 
         }
     }
@@ -342,7 +348,8 @@ namespace grove_pn532 {
      * Formats a tag as ndef format.
      */
     export function formatAsNdef(): void {
-        if (DEBUG_SERIAL) debug_message("Starting to format...");
+        if (DEBUG_SERIAL)
+            debug_message("Starting to format...");
 
         if (!running) {
             wakeup();
@@ -368,35 +375,37 @@ namespace grove_pn532 {
             }
 
         } else {
-            if (DEBUG_SERIAL) debug_message("Did not find a target when trying to format");
+            if (DEBUG_SERIAL)
+                debug_message("Did not find a target when trying to format");
         }
 
-        if (DEBUG_SERIAL) debug_message("formatting finished...");
+        if (DEBUG_SERIAL)
+            debug_message("formatting finished...");
     }
 
-	/**
-	* Converts number to string
-	*/
-	//% weight=212
-	//% blockId=grove_pn532_numberToString
-	//% block="convert to string %nr"
-	//% parts="grove_pn532"
-	export function convertNrToString(nr : number) : string {
-		return ""+nr;
-	}
-	
-	
-	/**
-	* Write NDEF text record to Mifare Ultralight tag.
-	*/
-	//% weight=210
-	//% blockId=grove_pn532_textrecord_write
-	//% block="write to NFC tag %charsToWrite"
-	//% parts="grove_pn532"
+    /**
+     * Converts number to string
+     */
+    //% weight=212
+    //% blockId=grove_pn532_numberToString
+    //% block="convert to string %nr"
+    //% parts="grove_pn532"
+    export function convertNrToString(nr: number): string {
+        return "" + nr;
+    }
+
+    /**
+     * Write NDEF text record to Mifare Ultralight tag.
+     */
+    //% weight=210
+    //% blockId=grove_pn532_textrecord_write
+    //% block="write to NFC tag %charsToWrite"
+    //% parts="grove_pn532"
     export function writeNDEFText(charsToWrite: string) {
         basic.showIcon(IconNames.Square);
 
-        if (DEBUG_SERIAL) debug_message("Starting to write...");
+        if (DEBUG_SERIAL)
+            debug_message("Starting to write...");
 
         if (!running) {
             wakeup();
@@ -408,17 +417,19 @@ namespace grove_pn532 {
 
         if (targetID == 1) { //Did we find a device?
 
-            if (DEBUG_SERIAL) debug_message("found target to write to");
+            if (DEBUG_SERIAL)
+                debug_message("found target to write to");
 
             //FIXME: Redundent initilization of the tag?.
             formatAsNdef();
             //TODO: More safety checks with write4Bytes() return value
 
-            //We can write to every page before 0x29 and after 0x03 
+            //We can write to every page before 0x29 and after 0x03
             //We also have to reserve 1 bit for the 0xFE at the end.
             let maxStringLength = ((0x29 - 0x04) * 4) - 1;
             if (charsToWrite.length > maxStringLength) {
-                if (DEBUG_SERIAL) debug_message("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
+                if (DEBUG_SERIAL)
+                    debug_message("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
                 return;
             }
 
@@ -459,19 +470,21 @@ namespace grove_pn532 {
             write4Bytes(pageToAdd, address++);
 
         } else {
-            if (DEBUG_SERIAL) debug_message("Did not find a target when trying to write");
+            if (DEBUG_SERIAL)
+                debug_message("Did not find a target when trying to write");
         }
         basic.clearScreen();
-        if (DEBUG_SERIAL) debug_message("writing finished...");
+        if (DEBUG_SERIAL)
+            debug_message("writing finished...");
 
     }
 
-	/**
-	 * Read NDEF text record from Mifare Ultralight tag.
+    /**
+     * Read NDEF text record from Mifare Ultralight tag.
      */
     //% weight=209
     //% blockId=grove_pn532_textrecord_read
-	//% block="read text message in NFC tag"
+    //% block="read text message in NFC tag"
     //% parts="grove_pn532"
     export function readNDEFText(): string {
         if (!running) {
@@ -480,13 +493,14 @@ namespace grove_pn532 {
             // we have to wait...
         }
 
-	findPassiveTarget();
+        findPassiveTarget();
 
         let textMessage = "";
-	if (targetID == 1) { //Did we find a device?
-	if (DEBUG_SERIAL) {
-	    for (let j = 0; j < 16; j++) read16Bytes(j);
-	    }
+        if (targetID == 1) { //Did we find a device?
+            if (DEBUG_SERIAL) {
+                for (let j = 0; j < 16; j++)
+                    read16Bytes(j);
+            }
 
             let outputFrame = read16Bytes(0x04);
             if (outputFrame != null) {
@@ -494,21 +508,22 @@ namespace grove_pn532 {
                 let messageLength = -1;
                 // skip RDY, PREAMBLE, START CODE, LEN, LCS, TFI, COMMAND CODE, STATUS
                 // skip also DCS, POSTAMBLE at the end
-		for (let l = 9; l < outputFrame.length - 2; l++) {
-		    let m = outputFrame.getNumber(NumberFormat.UInt8LE, l);
-		    let n = outputFrame.getNumber(NumberFormat.UInt8LE, l+5);
+                for (let l = 9; l < outputFrame.length - 2; l++) {
+                    let m = outputFrame.getNumber(NumberFormat.UInt8LE, l);
+                    let n = outputFrame.getNumber(NumberFormat.UInt8LE, l + 5);
                     //where is the first NDEF message with message type == text?
                     if (m == 0x03 &&
                         n == 0x54) {
 
-                        //The last 6 bits (0x3F) of the status byte are the length of the IANA language code field 
-                        // Text length = messageLength - language code length - 1 
+                        //The last 6 bits (0x3F) of the status byte are the length of the IANA language code field
+                        // Text length = messageLength - language code length - 1
                         messageLength = outputFrame.getNumber(NumberFormat.UInt8LE, l + 4) -
                             (outputFrame.getNumber(NumberFormat.UInt8LE, l + 6) & 0x3F) - 1;
 
-			    startByte = l + 7 + (outputFrame.getNumber(NumberFormat.UInt8LE, l + 6) & 0x3F);
+                        startByte = l + 7 + (outputFrame.getNumber(NumberFormat.UInt8LE, l + 6) & 0x3F);
 
-			if (DEBUG_SERIAL) debug_message("found NDEF message with message type text at "+startByte+" and length "+messageLength);
+                        if (DEBUG_SERIAL)
+                            debug_message("found NDEF message with message type text at " + startByte + " and length " + messageLength);
 
                         break;
                     }
@@ -518,17 +533,18 @@ namespace grove_pn532 {
 
                     let amountRead = 27 - startByte - 2; // 27 bytes normal information frame w/ 16 bytes packet data, whereof 2 for postamble and data checksum
                     let currentPage = 0x04;
-
                     while (true) {
 
-                        if (DEBUG_SERIAL) debug_message("reading byte " + startByte + " from page " + decToHex(currentPage));
+                        if (DEBUG_SERIAL)
+                            debug_message("reading byte " + startByte + " from page " + decToHex(currentPage));
 
                         if (startByte >= outputFrame.length - 2) {
                             //We need to read more bytes
 
                             messageLength -= amountRead;
 
-                            if (DEBUG_SERIAL) debug_message("messageLength left: " + messageLength);
+                            if (DEBUG_SERIAL)
+                                debug_message("messageLength left: " + messageLength);
 
                             if (messageLength <= 0) {
                                 //Reached the end of input.
@@ -537,13 +553,15 @@ namespace grove_pn532 {
 
                             startByte = 9;
                             currentPage += 0x04; //We read 4 pages, read the next ones now
-                            if (DEBUG_SERIAL) debug_message("Getting a new page with address " + decToHex(currentPage));
+                            if (DEBUG_SERIAL)
+                                debug_message("Getting a new page with address " + decToHex(currentPage));
                             outputFrame = read16Bytes(currentPage);
                             amountRead = 16;
 
                             if (outputFrame == null) {
                                 //Something has gone terribly wrong. abort!
-                                if (DEBUG_SERIAL) debug_message("error reading from address " + decToHex(currentPage) + "! Aborting");
+                                if (DEBUG_SERIAL)
+                                    debug_message("error reading from address " + decToHex(currentPage) + "! Aborting");
                                 break;
                             }
 
@@ -552,20 +570,23 @@ namespace grove_pn532 {
                         if (outputFrame.getNumber(NumberFormat.UInt8LE, startByte) == 0xFE) {
                             //We reached the end of our record. Stop reading.
                             //Theoretically we should not reach here since we read till exectly the character before
-                            if (DEBUG_SERIAL) debug_message("Found end of record (0xFE)! This shouldnt happen..");
+                            if (DEBUG_SERIAL)
+                                debug_message("Found end of record (0xFE)! This shouldnt happen..");
                             break;
                         }
 
                         //ToDo: read UTF-8
                         textMessage += String.fromCharCode(outputFrame.getNumber(NumberFormat.UInt8LE, startByte));
                         startByte++;
-                        if (DEBUG_SERIAL) debug_message("Got char " + String.fromCharCode(outputFrame.getNumber(NumberFormat.UInt8LE, startByte)));
+                        if (DEBUG_SERIAL)
+                            debug_message("Got char " + String.fromCharCode(outputFrame.getNumber(NumberFormat.UInt8LE, startByte)));
                     }
                 }
             }
         }
 
-        if (DEBUG_SERIAL) debug_message("The found textMessage is\n" + textMessage);
+        if (DEBUG_SERIAL)
+            debug_message("The found textMessage is\n" + textMessage);
 
         return textMessage;
     }
