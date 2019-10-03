@@ -397,6 +397,7 @@ namespace grove_pn532 {
 
             let data = [charsToWrite.length];
             for (let j=0;j<charsToWrite.length;j++) data[j+1] = charsToWrite.charCodeAt(j);
+            for (let k=charsToWrite.length;k<15;k++) data[k+1] = 0;
             
             write16Bytes(data, 0x04);
 
