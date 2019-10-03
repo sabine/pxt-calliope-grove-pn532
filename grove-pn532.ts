@@ -101,7 +101,7 @@ namespace grove_pn532 {
      */
     function read16Bytes(address: number) {
 
-        authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
+        let authenticated = authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
 
         basic.pause(70);
 
@@ -347,11 +347,12 @@ namespace grove_pn532 {
         }
 
         writeBuffer(fullCommand);
+        let sucess : boolean = checkOutput(ACK_FRAME);
 
-        checkOutput(ACK_FRAME);
-        
-        let authResponse = readFrame();
-        let sucess : boolean = (authResponse[7] == 0x00);        
+        if(success) {
+          let authResponse = readFrame();
+          success = (authResponse[7] == 0x00);
+        }
         
         if (DEBUG_SERIAL) {
           debug_message(success? "Erfolgreich.": "Fehlgeschlagen.");
