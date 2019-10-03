@@ -81,7 +81,9 @@ namespace grove_pn532 {
      */
     function read16Bytes(address: number) {
 
-        //authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
+        authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
+        
+        basic.pause(70);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let command: number[] = [0xD4, 0x40, 0x01, 0x30, address];
@@ -255,8 +257,6 @@ namespace grove_pn532 {
 
         // if something went wrong...
         if (validAck && validWakeupOK) {
-            increaseTimeout();
-        
             running = true;
         } else {
             if (DEBUG_SERIAL)
@@ -307,15 +307,6 @@ namespace grove_pn532 {
                 printBufferAsHex(outputFrame);
             }
         }
-    }
-
-    function increaseTimeout() : void {
-      // RFConfiguration, CfgItem 0x02, timeout 0x1B instead of 0x0B
-      let command : number[] = [0xD4, 0x32, 0x02, 0x00, 0x1B, 0x0A]
-      
-      writeBuffer(makeCommand(command));
-      
-      checkOutput(ACK_FRAME);
     }
     
     function makeCommand(command: number[]): number[]{
