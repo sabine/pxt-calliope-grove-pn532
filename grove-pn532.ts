@@ -74,6 +74,26 @@ namespace grove_pn532 {
         basic.pause(50);
     }
 
+    function readFrame(): Buffer {
+
+        let buffer = pins.i2cReadBuffer(ADDRESS, 7);
+        let len = buffer[4];
+        let content = pins.i2cReadBuffer(ADDRESS, len + 1);
+        buffer.write(7, content);
+
+        if (buffer[0] != 0x01) {
+            if (DEBUG_SERIAL)
+                debug_message("buffer[0] != 0x01");
+
+        }
+
+        if (DEBUG_SERIAL) {
+            printBufferAsHex(buffer);
+        }
+
+        return buffer;
+    }
+
     /**
      * Reads 16 bytes of data from the device.
      * @param address The address to read from
@@ -82,12 +102,12 @@ namespace grove_pn532 {
     function read16Bytes(address: number) {
 
         authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
-        
+
         basic.pause(70);
 
         // InDataExchange: target 1 (0x01), 16 bytes reading (0x30)
         let command: number[] = [0xD4, 0x40, 0x01, 0x30, address];
-        
+
         let fullCommand = makeCommand(command);
 
         if (DEBUG_SERIAL) {
@@ -97,26 +117,10 @@ namespace grove_pn532 {
 
         writeBuffer(fullCommand);
 
-        // check ack frame
-        if (!checkOutput(ACK_FRAME)) {
-            if (DEBUG_SERIAL)
-                debug_message("ACK check failed!");
+        checkOutput(ACK_FRAME);
 
-        }
-
-        // we'll receive an normal information frame (see 6.2.1.1 in UM) with 16 bytes of packet data
-        let outputFrame = pins.i2cReadBuffer(ADDRESS, 27);
-
-        if (outputFrame[0] != 0x01) {
-            if (DEBUG_SERIAL)
-                debug_message("outputFrame[0] != 0x01");
-
-        }
-
-        if (DEBUG_SERIAL) {
-            //	  debug_message("Got outputBuffer!");
-            printBufferAsHex(outputFrame);
-        }
+        // if successful, we'll receive an normal information frame (see 6.2.1.1 in UM) with 16 bytes of packet data
+        let outputFrame = readFrame();
 
         return outputFrame;
     }
@@ -269,7 +273,7 @@ namespace grove_pn532 {
         targetNFCID = [0, 0, 0, 0];
 
         basic.showIcon(IconNames.SmallHeart);
-        
+
         // InListPassiveTarget: 1 target, 106 kbps type A (ISO14443 Type A)
         const listTarget: number[] = [0x00, 0x00, 0xFF, 0x04, 0xFC, 0xD4, 0x4A, 0x01, 0x00, 0xE1, 0x00];
         writeBuffer(listTarget);
@@ -291,7 +295,7 @@ namespace grove_pn532 {
                 printBufferAsHex(outputFrame);
                 printNrArrayAsHex(targetNFCID);
             }
-            
+
             basic.showIcon(IconNames.Yes);
         } else {
             basic.showLeds(`
@@ -308,7 +312,7 @@ namespace grove_pn532 {
             }
         }
     }
-    
+
     function makeCommand(command: number[]): number[]{
         let len = command.length;
         let length_checksum = 0x100 - (len % 0x100);
