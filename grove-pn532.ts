@@ -522,8 +522,7 @@ namespace grove_pn532 {
         if (targetID == 1) {
             if (DEBUG_SERIAL) {
                 //let mem = [];
-                //for(let j=0;j<16;j++) mem[j] =
-                read16Bytes(j);
+                for(let j=0;j<16;j++) read16Bytes(j);
                 
                 //for(let k=0;k<16;k++) printBufferAsHex(mem[k]);
             }
