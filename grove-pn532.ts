@@ -88,6 +88,7 @@ namespace grove_pn532 {
 
         if (DEBUG_SERIAL) {
             debug_message("read frame:");
+            printBufferAsHex(buffer);
             printBufferAsHex(outputFrame);
         }
 
