@@ -504,7 +504,7 @@ namespace grove_pn532 {
     }
 
     /**
-     * Read NDEF text record from Mifare Ultralight tag.
+     * Read text from Mifare Ultralight tag.
      */
     //% weight=209
     //% blockId=grove_pn532_textrecord_read
@@ -514,19 +514,19 @@ namespace grove_pn532 {
         if (!running) {
             wakeup();
             basic.pause(50);
-            // we have to wait...
         }
 
         findPassiveTarget();
 
         let textMessage = "";
-        if (targetID == 1) { //Did we find a device?
-            /*if (DEBUG_SERIAL) {
-                let mem = [];
-                for(let j=0;j<16;j++) mem[j] = read16Bytes(j);
+        if (targetID == 1) {
+            if (DEBUG_SERIAL) {
+                //let mem = [];
+                //for(let j=0;j<16;j++) mem[j] =
+                read16Bytes(j);
                 
-                for(let k=0;k<16;k++) printBufferAsHex(mem[k]);
-            }*/
+                //for(let k=0;k<16;k++) printBufferAsHex(mem[k]);
+            }
 
             let outputFrame = read16Bytes(0x04);
             if (outputFrame != null) {
