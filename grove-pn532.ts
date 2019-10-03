@@ -469,7 +469,7 @@ namespace grove_pn532 {
               let message = messageFrame.slice(9,16);
               let len = messageLength - (blocksNeeded-1)*16;
               if(j<blocksNeeded -1) len=16
-              for (let i=1;i<=len;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));
+              for (let i=0;i<=len;i++) textMessage += String.fromCharCode(message.getNumber(NumberFormat.UInt8LE, i));
             }
         }
 
