@@ -347,16 +347,10 @@ namespace grove_pn532 {
         }
 
         writeBuffer(fullCommand);
-        let sucess : boolean = checkOutput(ACK_FRAME);
+        checkOutput(ACK_FRAME);
 
-        if(success) {
-          let authResponse = readFrame();
-          success = (authResponse[7] == 0x00);
-        }
-        
-        if (DEBUG_SERIAL) {
-          debug_message(success? "Erfolgreich.": "Fehlgeschlagen.");
-        }
+        let authResponse = readFrame();
+        let sucess : boolean = (authResponse[7] == 0x00);
         
         return success;
     }
