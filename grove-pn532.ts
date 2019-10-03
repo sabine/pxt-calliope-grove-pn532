@@ -16,6 +16,7 @@ namespace grove_pn532 {
     let targetID = 0;
     // if ISO14443-A / Mifare target found, targetID will be 1
     let targetNFCID = [0, 0, 0, 0];
+    let targetKey = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF];
     let running = false;
     // if PN532 isn't running, no reading will be possible
 
@@ -101,7 +102,7 @@ namespace grove_pn532 {
      */
     function read16Bytes(address: number) {
 
-        let authenticated = authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
+        authenticate(address);
 
         basic.pause(70);
 
@@ -132,6 +133,8 @@ namespace grove_pn532 {
      * @returns true if writing the data to the tag was successful.
      */
     function write16Bytes(data: number[], address: number) {
+    
+        authenticate(address);
 
         if (DEBUG_SERIAL) {
             debug_message("writing to " + decToHex(address) + ": ");
