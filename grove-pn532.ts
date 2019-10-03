@@ -103,7 +103,7 @@ namespace grove_pn532 {
 
         let authenticated = authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
         
-        authenticate(address, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+        authenticate(address, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
         
         //authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
         
@@ -358,9 +358,11 @@ namespace grove_pn532 {
         let authResponse = readFrame();
         let success = (authResponse[7] == 0x00);
         
+        /*
         if (DEBUG_SERIAL) {
             if(success) debug_message("Erfolgreich! ") else debug_message("Fehlgeschlagen!");
         }
+        */
         
         return success;
     }
