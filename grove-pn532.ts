@@ -105,7 +105,7 @@ namespace grove_pn532 {
         
         authenticate(address, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
         
-        //authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
+        authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
         
         //authenticate(address, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
 
@@ -342,6 +342,12 @@ namespace grove_pn532 {
 
     function authenticate(address: number, key: number[]): boolean {
 
+        let selectCommand = [0xD4, 0x54, targetID];
+        writeBuffer(makeCommand(selectCommand));
+        checkOutput(ACK_FRAME);
+        readFrame();
+    
+    
         // InDataExchange, authenticate with key A 0x60
         let command = concatNumArr([0xD4, 0x40, targetID, 0x60, address], concatNumArr(key, targetNFCID));
 
