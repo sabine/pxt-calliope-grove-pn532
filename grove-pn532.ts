@@ -398,9 +398,9 @@ namespace grove_pn532 {
             let maxStringLength = 16+16+16+16+16+16;
             
             if (charsToWrite.length > maxStringLength) {
+                charsToWrite = charsToWrite.slice(0, maxStringLength);
                 if (DEBUG_SERIAL)
                     debug_message("String length of " + charsToWrite.length + "is too high.\nNeeds to be <=" + maxStringLength);
-                return;
             }
 
             let blocksNeeded = charsToWrite.length/16+1;
