@@ -351,10 +351,10 @@ namespace grove_pn532 {
         checkOutput(ACK_FRAME);
         
         let authResponse = readFrame();
-        let sucess = authResponse[7] == 0x00;
+        let sucess : boolean = (authResponse[7] == 0x00);        
         
         if (DEBUG_SERIAL) {
-          debug_message(success? "Erfolgreich.": "Fehlgeschlagen.")
+          debug_message(success? "Erfolgreich.": "Fehlgeschlagen.");
         }
         
         return success;
