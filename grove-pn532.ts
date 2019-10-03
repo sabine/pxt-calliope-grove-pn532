@@ -415,11 +415,13 @@ namespace grove_pn532 {
             }
             
             // header block contains only the length of the text
+            /*
             let header = [charsToWrite.length];
             for (let k=1;k<16;k++) header[k] = 0;
             write16Bytes(header, 0x04);
             
             for (let j=0;j<blocksNeeded;j++) write16Bytes(data[j], dataBlocks[j]);
+            */
 
         } else {
             if (DEBUG_SERIAL)
